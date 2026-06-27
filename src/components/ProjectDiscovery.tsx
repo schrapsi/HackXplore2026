@@ -27,7 +27,7 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
       
       {/* Header */}
       <div className="w-full max-w-6xl mx-auto flex justify-between items-center mb-12">
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT</h1>
+        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
         <button onClick={onBack} className="btn btn-ghost rounded-full px-6">
           Start over
         </button>
