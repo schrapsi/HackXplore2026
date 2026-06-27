@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Project } from '../types';
 import { mockBackend } from '../data/auth';
+import { calculateTotalCommitment } from '../data/projects';
 
 interface SignupFlowProps {
   project: Project;
@@ -9,21 +10,17 @@ interface SignupFlowProps {
   onComplete: () => void;
 }
 
-const budgetTierLabels: Record<string, string> = {
-  '20k-50k': '€20k - €50k',
-  '50k-100k': '€50k - €100k',
-  '100k-200k': '€100k - €200k',
-  '200k-500k': '€200k - €500k',
-  '500k+': '> €500k',
-};
 
-export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFlowProps) {
+
+export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: SignupFlowProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
+
+  const totalCommitment = calculateTotalCommitment(project.initialCost, project.runningCostsPerYear);
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +38,7 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
   const handleCommitFunds = async () => {
     setIsProcessing(true);
     try {
-      await mockBackend.commitToProject(project.id, budgetTier);
+      await mockBackend.commitToProject(project.id, totalCommitment.toString());
       setStep('success');
       setTimeout(() => {
         onComplete();
@@ -68,7 +65,7 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
           <span className="text-sm uppercase tracking-widest opacity-80 font-semibold mb-2 block">You selected</span>
           <h2 className="text-2xl font-bold">{project.title}</h2>
           <div className="mt-4 inline-block bg-primary-content/10 px-4 py-1 rounded-full border border-primary-content/20">
-            Commitment: <span className="font-bold text-accent">{budgetTierLabels[budgetTier] ?? budgetTier}</span>
+            Commitment: <span className="font-bold text-accent">€{totalCommitment.toLocaleString()}</span>
           </div>
         </div>
 
