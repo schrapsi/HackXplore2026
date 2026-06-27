@@ -16,6 +16,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
   const [name, setName] = useState('Emma Fischer');
   const [email, setEmail] = useState('emma.fischer@example.com');
   const [password, setPassword] = useState('pw');
+  const [hubBrandName, setHubBrandName] = useState('');
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
@@ -26,7 +27,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
     e.preventDefault();
     setIsProcessing(true);
     try {
-      await mockBackend.createAccount(name, email);
+      await mockBackend.createAccount(name, email, hubBrandName);
       setStep('payment');
     } catch (err) {
       console.error(err);
@@ -100,6 +101,18 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
               </div>
 
               <div className="form-control">
+                <label className="label"><span className="label-text font-medium">Impact Hub Brand</span></label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. Smith Family Trust" 
+                  className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
+                  value={hubBrandName}
+                  onChange={e => setHubBrandName(e.target.value)}
+                />
+              </div>
+
+              <div className="form-control">
                 <label className="label"><span className="label-text font-medium">Password</span></label>
                 <input 
                   type="password" 
@@ -113,7 +126,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
 
               <button 
                 type="submit" 
-                disabled={isProcessing || !name || !email || !password}
+                disabled={isProcessing || !name || !email || !password || !hubBrandName}
                 className="btn btn-primary w-full rounded-full text-lg mt-4"
               >
                 {isProcessing ? <span className="loading loading-spinner"></span> : 'Continue to payment'}

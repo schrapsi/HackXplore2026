@@ -9,7 +9,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const mockBackend = {
   // Simulate creating a new account
-  async createAccount(name: string, email: string): Promise<User> {
+  async createAccount(name: string, email: string, hubBrandName: string): Promise<User> {
     await delay(800); // simulate network
     
     // Check if user already exists
@@ -21,6 +21,7 @@ export const mockBackend = {
       id: Math.random().toString(36).substring(2, 9),
       name,
       email,
+      hubBrandName,
       avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120`,
       fundedProjects: []
     };
@@ -73,5 +74,51 @@ export const mockBackend = {
   async logout(): Promise<void> {
     await delay(300);
     currentUser = null;
+  },
+
+  // Get Top Impacters (Mock Leaderboard)
+  async getTopImpacters() {
+    await delay(400);
+    // Hardcoded mock users for the leaderboard
+    const mockLeaderboard = [
+      { rank: 1, name: "Elena R.", brand: "Elena's Ocean Rescue", committed: 450000 },
+      { rank: 2, name: "Marcus T.", brand: "The Green Horizon", committed: 380000 },
+      { rank: 3, name: "Sarah J.", brand: "Sarah Cares", committed: 310000 },
+      { rank: 4, name: "David K.", brand: "Future Builders", committed: 275000 },
+      { rank: 5, name: "Nina W.", brand: "Safe Havens", committed: 220000 },
+      { rank: 6, name: "Tom H.", brand: "Tech for Good", committed: 190000 },
+      { rank: 7, name: "Lisa M.", brand: "Mental Health First", committed: 150000 },
+      { rank: 8, name: "James B.", brand: "James Impact", committed: 110000 },
+      { rank: 9, name: "Emma S.", brand: "Emma's Education Fund", committed: 95000 },
+      { rank: 10, name: "Felix R.", brand: "Clean Rivers Initiative", committed: 80000 }
+    ];
+
+    // Optional: Calculate actual user commitment and inject if high enough
+    let userTotal = 0;
+    if (currentUser) {
+      userTotal = currentUser.fundedProjects.reduce((sum, p) => {
+        // Quick extraction of numbers from string like "50k-100k" -> take 50000
+        const match = p.amountCommitted.match(/(\d+)k/);
+        return sum + (match ? parseInt(match[1]) * 1000 : 0);
+      }, 0);
+      
+      if (userTotal > 0) {
+        mockLeaderboard.push({
+          rank: 0, 
+          name: currentUser.name, 
+          brand: currentUser.hubBrandName || `${currentUser.name}'s Hub`, 
+          committed: userTotal
+        });
+      }
+    }
+
+    // Sort descending by commitment
+    mockLeaderboard.sort((a, b) => b.committed - a.committed);
+    
+    // Re-assign ranks
+    return mockLeaderboard.map((item, index) => ({
+      ...item,
+      rank: index + 1
+    })).slice(0, 10); // Keep top 10
   }
 };
