@@ -9,6 +9,14 @@ interface SignupFlowProps {
   onComplete: () => void;
 }
 
+const budgetTierLabels: Record<string, string> = {
+  '20k-50k': '€20k - €50k',
+  '50k-100k': '€50k - €100k',
+  '100k-200k': '€100k - €200k',
+  '200k-500k': '€200k - €500k',
+  '500k+': '> €500k',
+};
+
 export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFlowProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -60,21 +68,21 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
           <span className="text-sm uppercase tracking-widest opacity-80 font-semibold mb-2 block">You selected</span>
           <h2 className="text-2xl font-bold">{project.title}</h2>
           <div className="mt-4 inline-block bg-primary-content/10 px-4 py-1 rounded-full border border-primary-content/20">
-            Commitment: <span className="font-bold text-accent">{budgetTier.replace('-', ' - ')}</span>
+            Commitment: <span className="font-bold text-accent">{budgetTierLabels[budgetTier] ?? budgetTier}</span>
           </div>
         </div>
 
         <div className="p-8">
           {step === 'details' && (
             <form onSubmit={handleCreateAccount} className="flex flex-col gap-5 animate-fade-in">
-              <h3 className="text-xl font-bold text-base-content text-center mb-2">Create your Account</h3>
+              <h3 className="text-xl font-bold text-base-content text-center mb-2">Create your account</h3>
               
               <div className="form-control">
-                <label className="label"><span className="label-text font-medium">Full Name</span></label>
+                <label className="label"><span className="label-text font-medium">Full name</span></label>
                 <input 
                   type="text" 
                   required
-                  placeholder="John Doe" 
+                  placeholder="Alex Morgan" 
                   className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
                   value={name}
                   onChange={e => setName(e.target.value)}
@@ -82,11 +90,11 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
               </div>
 
               <div className="form-control">
-                <label className="label"><span className="label-text font-medium">Email Address</span></label>
+                <label className="label"><span className="label-text font-medium">Email address</span></label>
                 <input 
                   type="email" 
                   required
-                  placeholder="john@example.com" 
+                  placeholder="max@example.com" 
                   className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -98,7 +106,7 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
                 <input 
                   type="password" 
                   required
-                  placeholder="••••••••" 
+                  placeholder="********" 
                   className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
                   value={password}
                   onChange={e => setPassword(e.target.value)}
@@ -110,7 +118,7 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
                 disabled={isProcessing || !name || !email || !password}
                 className="btn btn-primary w-full rounded-full text-lg mt-4"
               >
-                {isProcessing ? <span className="loading loading-spinner"></span> : 'Continue to Payment'}
+                {isProcessing ? <span className="loading loading-spinner"></span> : 'Continue to payment'}
               </button>
             </form>
           )}
@@ -120,8 +128,8 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
               <div className="w-16 h-16 bg-success/20 text-success rounded-full flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-base-content mb-2">Account Created</h3>
-              <p className="text-base-content/70 mb-8">You are about to transfer the funds to officially kickstart the project.</p>
+              <h3 className="text-xl font-bold text-base-content mb-2">Account created</h3>
+              <p className="text-base-content/70 mb-8">You are about to transfer the funds and officially kickstart the project.</p>
               
               <button 
                 onClick={handleCommitFunds}
@@ -130,10 +138,10 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
               >
                 {isProcessing ? (
                   <>
-                    <span className="loading loading-spinner"></span> Processing Bank Transfer...
+                    <span className="loading loading-spinner"></span> Processing bank transfer...
                   </>
                 ) : (
-                  'Authorize Transfer'
+                  'Authorize transfer'
                 )}
               </button>
             </div>
@@ -141,7 +149,7 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
 
           {step === 'success' && (
             <div className="flex flex-col items-center py-8 text-center animate-fade-in">
-              <span className="text-6xl mb-4">🎉</span>
+              <span className="text-6xl mb-4">✓</span>
               <h3 className="text-2xl font-bold text-base-content mb-2">Thank you, {name}!</h3>
               <p className="text-base-content/70">Your funds have been committed. Redirecting to your dashboard...</p>
             </div>
