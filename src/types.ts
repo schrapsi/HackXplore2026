@@ -8,3 +8,14 @@ export interface Project {
   imageUrl: string;
   impactMetric: string;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  fundedProjects: {
+    projectId: string;
+    amountCommitted: string;
+    date: string;
+  }[];
+}

@@ -3,9 +3,10 @@ import type { Project } from '../types';
 interface ProjectDiscoveryProps {
   projects: Project[];
   onBack: () => void;
+  onFundProject: (project: Project) => void;
 }
 
-export function ProjectDiscovery({ projects, onBack }: ProjectDiscoveryProps) {
+export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDiscoveryProps) {
   if (projects.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -71,7 +72,10 @@ export function ProjectDiscovery({ projects, onBack }: ProjectDiscoveryProps) {
                 </div>
 
                 <div className="card-actions justify-end mt-auto pt-4">
-                  <button className="btn btn-primary w-full rounded-full shadow-md text-lg h-12">
+                  <button 
+                    onClick={() => onFundProject(project)}
+                    className="btn btn-primary w-full rounded-full shadow-md text-lg h-12"
+                  >
                     Fund this Project
                   </button>
                 </div>

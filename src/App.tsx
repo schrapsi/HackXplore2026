@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { ProjectDiscovery } from './components/ProjectDiscovery';
+import { SignupFlow } from './components/SignupFlow';
 import { processUserInput } from './data/projects';
 import type { Project } from './types';
 
 function App() {
-  const [step, setStep] = useState<'landing' | 'discovery'>('landing');
+  const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'dashboard'>('landing');
   const [matchedProjects, setMatchedProjects] = useState<Project[]>([]);
+  
+  // Track selections across steps
+  const [selectedBudget, setSelectedBudget] = useState('');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const handleSearch = (prompt: string, budget: string) => {
-    // Scaffold: Convert user input into projects
+    setSelectedBudget(budget);
     const results = processUserInput(prompt, budget);
     setMatchedProjects(results);
-    
-    // Transition to the next page
     setStep('discovery');
   };
 
@@ -22,13 +25,48 @@ function App() {
     setMatchedProjects([]);
   };
 
+  const handleFundProject = (project: Project) => {
+    setSelectedProject(project);
+    setStep('signup');
+  };
+
+  const handleSignupComplete = () => {
+    setStep('dashboard');
+  };
+
   return (
     <>
       {step === 'landing' && (
         <LandingPage onSearch={handleSearch} />
       )}
+      
       {step === 'discovery' && (
-        <ProjectDiscovery projects={matchedProjects} onBack={handleGoBack} />
+        <ProjectDiscovery 
+          projects={matchedProjects} 
+          onBack={handleGoBack} 
+          onFundProject={handleFundProject}
+        />
+      )}
+
+      {step === 'signup' && selectedProject && (
+        <SignupFlow 
+          project={selectedProject} 
+          budgetTier={selectedBudget}
+          onBack={() => setStep('discovery')}
+          onComplete={handleSignupComplete}
+        />
+      )}
+
+      {step === 'dashboard' && (
+        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+          <h2 className="text-4xl font-bold text-primary mb-4">Dashboard</h2>
+          <p className="text-lg text-base-content/70">
+            Welcome to your impact dashboard. Step 4 is coming soon!
+          </p>
+          <button onClick={handleGoBack} className="btn btn-outline mt-8 rounded-full">
+            Fund Another Project
+          </button>
+        </div>
       )}
     </>
   );
