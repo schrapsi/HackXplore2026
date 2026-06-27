@@ -87,7 +87,7 @@ export function ImpactHub({ onBack }: ImpactHubProps) {
         </div>
 
         {/* List Section */}
-        <div className="w-full max-w-3xl bg-base-100 rounded-3xl shadow-xl overflow-hidden border border-base-content/10">
+        <div className="w-full max-w-3xl bg-base-100 rounded-3xl shadow-xl overflow-hidden border border-base-300">
           <div className="bg-primary p-6 text-primary-content">
             <h3 className="text-xl font-bold">Rising Impacters</h3>
           </div>

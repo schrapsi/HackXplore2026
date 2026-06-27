@@ -12,6 +12,7 @@ interface DashboardProps {
   onNavigateHub: () => void;
 }
 
+<<<<<<< HEAD
 interface GlobalFeedItem {
   update: ProjectUpdate;
   supporterName: string;
@@ -19,6 +20,8 @@ interface GlobalFeedItem {
   avatarUrl: string;
 }
 
+=======
+>>>>>>> 0a8d674 (Impact Hub implemented)
 export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: DashboardProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [likedUpdates, setLikedUpdates] = useState<Set<string>>(new Set());
@@ -180,6 +183,7 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
     const totalLikes = getBaseLikes(update.id) + (isLiked ? 1 : 0);
     const avatarInitial = supporterName.charAt(0).toUpperCase();
 
+<<<<<<< HEAD
     return (
       <article
         key={update.id}
@@ -222,6 +226,19 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
                 <span className="badge badge-xs bg-success/10 text-success border-transparent font-bold">
                   Verified Impact
                 </span>
+=======
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={onNavigateHub}
+              className="btn btn-outline btn-sm rounded-full px-4 font-semibold text-primary border-primary/20 hover:bg-primary hover:text-primary-content hover:border-primary transition-colors"
+            >
+              Impact Hub
+            </button>
+            <div className="flex items-center gap-2">
+            <div className="avatar placeholder">
+              <div className="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-inner">
+                {user.name.charAt(0).toUpperCase()}
+>>>>>>> 0a8d674 (Impact Hub implemented)
               </div>
             </div>
           </div>
