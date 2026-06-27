@@ -1014,6 +1014,81 @@ export const processUserInput = async (prompt: string, budget: string): Promise<
   return budgetMatched;
 };
 
+export const chatWithLLM = async (
+  messages: { role: 'user' | 'model', parts: [{ text: string }] }[],
+  budget: string
+): Promise<{ reply: string, projects: Project[] }> => {
+  const budgetMatched = sampleProjects.filter(p => matchBudgetTier(p.initialCost, budget));
+
+  if (genAI) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        systemInstruction: "You are an AI assistant that helps philanthropic donors find the best projects. You are conversational and helpful. Read the chat history and provide a thoughtful reply. Also, return a list of project IDs that best match their requests based on the available projects provided below.",
+      });
+
+      const schema: Schema = {
+        type: SchemaType.OBJECT,
+        properties: {
+          reply: {
+            type: SchemaType.STRING,
+            description: "Your conversational response to the user's latest query."
+          },
+          projectIds: {
+            type: SchemaType.ARRAY,
+            items: {
+              type: SchemaType.STRING,
+            },
+            description: "An array of IDs for the suggested projects."
+          }
+        },
+        required: ["reply", "projectIds"]
+      };
+
+      const systemPrompt = `
+        Available projects within their budget:
+        ${JSON.stringify(budgetMatched.map(p => ({ id: p.id, title: p.title, description: p.description, category: p.category })), null, 2)}
+      `;
+
+      // Copy the messages to append the system context to the latest message
+      const latestMessage = messages[messages.length - 1];
+      const history = messages.slice(0, -1);
+      
+      const chat = model.startChat({
+        history,
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: schema,
+          temperature: 0.2,
+        }
+      });
+
+      const result = await chat.sendMessage(latestMessage.parts[0].text + "\n\n" + systemPrompt);
+
+      const responseText = result.response.text();
+      const parsed = JSON.parse(responseText);
+
+      const matchedIds: string[] = parsed.projectIds || [];
+      const reply: string = parsed.reply || "Here are some projects that might match your criteria.";
+
+      const matchedProjects = matchedIds
+        .map(id => budgetMatched.find(p => p.id === id))
+        .filter((p): p is Project => p !== undefined);
+
+      return { reply, projects: matchedProjects };
+    } catch (error) {
+      console.error("Error calling Gemini API for chat:", error);
+      return { reply: "I'm sorry, I'm having trouble connecting right now. Here are some default suggestions.", projects: budgetMatched.slice(0, 3) };
+    }
+  }
+
+  // Fallback
+  return {
+    reply: "This is a fallback response because the AI is not configured. Here are some projects in your budget.",
+    projects: budgetMatched.slice(0, 3)
+  };
+};
+
 export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
   return initialCost + (runningCostsPerYear / 0.04);
 };

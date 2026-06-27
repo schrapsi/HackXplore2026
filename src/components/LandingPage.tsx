@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { TopNavigationBar } from './TopNavigationBar'
 
 interface LandingPageProps {
-  onSearch: (prompt: string, budget: string) => void | Promise<void>;
+  onSearch: (prompt: string, budget: string) => void;
   onNavigateLogin: () => void;
 }
 
@@ -31,7 +31,6 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const [budget, setBudget] = useState('')
   const [suggestionIndex, setSuggestionIndex] = useState(0)
   const [typedSuggestion, setTypedSuggestion] = useState('')
-  const [isSearching, setIsSearching] = useState(false)
 
   useEffect(() => {
     const suggestion = promptSuggestions[suggestionIndex]
@@ -68,16 +67,10 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
     { id: '500k+', label: '> €500k' },
   ]
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!prompt || !budget) return
-    
-    setIsSearching(true)
-    try {
-      await onSearch(prompt, budget)
-    } finally {
-      setIsSearching(false)
-    }
+    onSearch(prompt, budget)
   }
 
   return (
@@ -139,10 +132,10 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
           <div className="flex justify-center mt-8">
             <button 
               type="submit" 
-              disabled={!prompt || !budget || isSearching}
+              disabled={!prompt || !budget}
               className="btn btn-primary btn-wide rounded-full text-lg h-14 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none"
             >
-              {isSearching ? <span className="loading loading-spinner"></span> : 'Find projects'}
+              Find projects
             </button>
           </div>
 

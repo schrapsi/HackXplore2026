@@ -5,13 +5,13 @@ import { SignupFlow } from './components/SignupFlow';
 import { LoginFlow } from './components/LoginFlow';
 import { Dashboard } from './components/Dashboard';
 import { ImpactHub } from './components/ImpactHub';
-import { processUserInput } from './data/projects';
+
 import { mockBackend } from './data/auth';
 import type { Project, User } from './types';
 
 function App() {
   const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'login' | 'dashboard' | 'hub'>('landing');
-  const [matchedProjects, setMatchedProjects] = useState<Project[]>([]);
+  const [initialPrompt, setInitialPrompt] = useState('');
   
   // Track selections across steps
   const [selectedBudget, setSelectedBudget] = useState('');
@@ -30,16 +30,15 @@ function App() {
     checkSession();
   }, []);
 
-  const handleSearch = async (prompt: string, budget: string) => {
+  const handleSearch = (prompt: string, budget: string) => {
     setSelectedBudget(budget);
-    const results = await processUserInput(prompt, budget);
-    setMatchedProjects(results);
+    setInitialPrompt(prompt);
     setStep('discovery');
   };
 
   const handleGoBack = () => {
     setStep('landing');
-    setMatchedProjects([]);
+    setInitialPrompt('');
   };
 
   const handleFundProject = (project: Project) => {
@@ -73,7 +72,8 @@ function App() {
       
       {step === 'discovery' && (
         <ProjectDiscovery 
-          projects={matchedProjects} 
+          initialPrompt={initialPrompt}
+          budget={selectedBudget}
           onBack={handleGoBack} 
           onFundProject={handleFundProject}
         />
