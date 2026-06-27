@@ -59,12 +59,12 @@ function App() {
 
       {step === 'dashboard' && (
         <div className="min-h-screen flex flex-col items-center justify-center p-4">
-          <h2 className="text-4xl font-bold text-primary mb-4">Dashboard</h2>
+          <h2 className="text-4xl font-bold text-primary mb-4">Wirkungs-Dashboard</h2>
           <p className="text-lg text-base-content/70">
-            Welcome to your impact dashboard. Step 4 is coming soon!
+            Willkommen in deinem Wirkungs-Dashboard. Schritt 4 folgt in Kürze!
           </p>
           <button onClick={handleGoBack} className="btn btn-outline mt-8 rounded-full">
-            Fund Another Project
+            Weiteres Projekt fördern
           </button>
         </div>
       )}
