@@ -80,7 +80,7 @@ export const mockBackend = {
   async getTopImpacters() {
     await delay(400);
     // Hardcoded mock users for the leaderboard
-    const mockLeaderboard = [
+    const mockLeaderboard: Array<{ rank: number; name: string; brand: string; committed: number; isCurrentUser?: boolean }> = [
       { rank: 1, name: "Elena R.", brand: "Elena's Ocean Rescue", committed: 450000 },
       { rank: 2, name: "Marcus T.", brand: "The Green Horizon", committed: 380000 },
       { rank: 3, name: "Sarah J.", brand: "Sarah Cares", committed: 310000 },
@@ -93,13 +93,13 @@ export const mockBackend = {
       { rank: 10, name: "Felix R.", brand: "Clean Rivers Initiative", committed: 80000 }
     ];
 
-    // Optional: Calculate actual user commitment and inject if high enough
+    // Calculate actual user commitment and inject if high enough
     let userTotal = 0;
     if (currentUser) {
       userTotal = currentUser.fundedProjects.reduce((sum, p) => {
-        // Quick extraction of numbers from string like "50k-100k" -> take 50000
-        const match = p.amountCommitted.match(/(\d+)k/);
-        return sum + (match ? parseInt(match[1]) * 1000 : 0);
+        // amountCommitted is a string of the total number (e.g. "1250000")
+        const val = parseInt(p.amountCommitted, 10);
+        return sum + (isNaN(val) ? 0 : val);
       }, 0);
       
       if (userTotal > 0) {
@@ -107,7 +107,8 @@ export const mockBackend = {
           rank: 0, 
           name: currentUser.name, 
           brand: currentUser.hubBrandName || `${currentUser.name}'s Hub`, 
-          committed: userTotal
+          committed: userTotal,
+          isCurrentUser: true
         });
       }
     }

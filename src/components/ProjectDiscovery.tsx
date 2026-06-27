@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { Project } from '../types';
 import { calculateTotalCommitment, chatWithLLM } from '../data/projects';
 import { TopNavigationBar } from './TopNavigationBar';
+import { ProjectMap } from './ProjectMap';
 
 interface Message {
   role: 'user' | 'model';
@@ -14,6 +15,80 @@ interface ProjectDiscoveryProps {
   budget: string;
   onBack: () => void;
   onFundProject: (project: Project) => void;
+}
+
+function MessageProjectsView({ projects, onFundProject }: { projects: Project[], onFundProject: (p: Project) => void }) {
+  const [activeView, setActiveView] = useState<'grid' | 'map'>('grid');
+
+  return (
+    <div className="mt-6 chat-footer w-full max-w-3xl">
+      <div className="flex justify-end mb-4">
+        <div className="join bg-base-100 p-1 rounded-full shadow-sm border border-base-300">
+          <button 
+            className={`btn btn-xs rounded-full px-4 ${activeView === 'grid' ? 'btn-primary text-primary-content' : 'btn-ghost'}`}
+            onClick={() => setActiveView('grid')}
+          >
+            Grid
+          </button>
+          <button 
+            className={`btn btn-xs rounded-full px-4 ${activeView === 'map' ? 'btn-primary text-primary-content' : 'btn-ghost'}`}
+            onClick={() => setActiveView('map')}
+          >
+            Map
+          </button>
+        </div>
+      </div>
+
+      {activeView === 'grid' ? (
+        <div className="flex flex-col gap-6">
+          {projects.map(project => {
+            const total = calculateTotalCommitment(project.initialCost, project.runningCostsPerYear);
+            return (
+              <div key={project.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border border-base-300 flex flex-col md:flex-row overflow-hidden">
+                <figure className="relative md:w-1/3 h-48 md:h-auto overflow-hidden">
+                  <img 
+                    src={project.imageUrl} 
+                    alt={project.title} 
+                    className="object-cover w-full h-full"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <span className="badge badge-primary badge-sm font-semibold shadow-sm">{project.location}</span>
+                  </div>
+                </figure>
+
+                <div className="card-body p-5 md:w-2/3">
+                  <h3 className="card-title text-lg text-primary">{project.title}</h3>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <span className="badge badge-outline badge-sm">{project.categoryLabel}</span>
+                  </div>
+                  <p className="text-base-content/80 text-sm line-clamp-2">
+                    {project.description}
+                  </p>
+
+                  <div className="mt-3 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-base-content/50 block">Commitment</span>
+                      <span className="text-lg font-bold text-base-content">€{total.toLocaleString()}</span>
+                    </div>
+                    <button 
+                      onClick={() => onFundProject(project)}
+                      className="btn btn-primary btn-sm rounded-full px-6"
+                    >
+                      Fund this
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="h-[400px] w-full rounded-2xl overflow-hidden shadow-lg border border-base-300 relative z-0">
+          <ProjectMap projects={projects} onFundProject={onFundProject} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function ProjectDiscovery({ initialPrompt, budget, onBack, onFundProject }: ProjectDiscoveryProps) {
@@ -49,7 +124,6 @@ export function ProjectDiscovery({ initialPrompt, budget, onBack, onFundProject 
     setIsLoading(true);
 
     try {
-      // Send only the necessary fields to the LLM to avoid sending internal state
       const chatHistory = newMessages.map(m => ({ role: m.role, parts: m.parts }));
       const response = await chatWithLLM(chatHistory, budget);
       setMessages([
@@ -86,7 +160,6 @@ export function ProjectDiscovery({ initialPrompt, budget, onBack, onFundProject 
       />
 
       <div className="flex-1 w-full max-w-5xl mx-auto px-4 py-8 flex flex-col">
-        {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto pr-2 space-y-8 pb-32">
           {messages.map((msg, idx) => (
             <div key={idx} className={`chat ${msg.role === 'user' ? 'chat-end' : 'chat-start'}`}>
@@ -102,55 +175,8 @@ export function ProjectDiscovery({ initialPrompt, budget, onBack, onFundProject 
                 <p className="whitespace-pre-wrap leading-relaxed">{msg.parts[0].text}</p>
               </div>
 
-              {/* Display suggested projects if model returned any */}
               {msg.role === 'model' && msg.projects && msg.projects.length > 0 && (
-                <div className="mt-6 chat-footer w-full max-w-3xl">
-                  <div className="flex flex-col gap-6">
-                    {msg.projects.map(project => (
-                      <div key={project.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border border-base-300 flex flex-col md:flex-row overflow-hidden">
-                        
-                        <figure className="relative md:w-1/3 h-48 md:h-auto overflow-hidden">
-                          <img 
-                            src={project.imageUrl} 
-                            alt={project.title} 
-                            className="object-cover w-full h-full"
-                          />
-                          <div className="absolute top-2 left-2">
-                            <span className="badge badge-primary badge-sm font-semibold shadow-sm">{project.location}</span>
-                          </div>
-                        </figure>
-
-                        <div className="card-body p-5 md:w-2/3">
-                          <h3 className="card-title text-lg text-primary">{project.title}</h3>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            <span className="badge badge-outline badge-sm">{project.categoryLabel}</span>
-                          </div>
-                          <p className="text-base-content/80 text-sm line-clamp-2">
-                            {project.description}
-                          </p>
-
-                          {(() => {
-                            const total = calculateTotalCommitment(project.initialCost, project.runningCostsPerYear);
-                            return (
-                              <div className="mt-3 flex items-center justify-between">
-                                <div>
-                                  <span className="text-[10px] uppercase font-bold text-base-content/50 block">Commitment</span>
-                                  <span className="text-lg font-bold text-base-content">€{total.toLocaleString()}</span>
-                                </div>
-                                <button 
-                                  onClick={() => onFundProject(project)}
-                                  className="btn btn-primary btn-sm rounded-full px-6"
-                                >
-                                  Fund this
-                                </button>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <MessageProjectsView projects={msg.projects} onFundProject={onFundProject} />
               )}
             </div>
           ))}
@@ -169,7 +195,6 @@ export function ProjectDiscovery({ initialPrompt, budget, onBack, onFundProject 
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Fixed Input Area */}
         <div className="fixed bottom-0 left-0 right-0 bg-base-200/90 backdrop-blur-md border-t border-base-300 p-4">
           <div className="max-w-4xl mx-auto">
             <form 
