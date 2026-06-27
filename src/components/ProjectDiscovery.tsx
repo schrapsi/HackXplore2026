@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Project } from '../types';
 import { calculateTotalCommitment } from '../data/projects';
+import { TopNavigationBar } from './TopNavigationBar';
 import { ProjectMap } from './ProjectMap';
 
 interface ProjectDiscoveryProps {
@@ -14,30 +15,36 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
 
   if (projects.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h2 className="text-3xl font-semibold mb-4">No exact matches found</h2>
-        <p className="text-base-content/70 mb-8 text-center max-w-md">
-          We couldn't find a project matching your exact criteria and budget. Try adjusting your prompt or commitment tier.
-        </p>
-        <button onClick={onBack} className="btn btn-outline btn-primary rounded-full px-8">
-          Go back
-        </button>
+      <div className="min-h-screen flex flex-col bg-base-100">
+        <TopNavigationBar 
+          badgeText="DISCOVERY"
+          rightElement={
+            <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-6 font-semibold">
+              Cancel
+            </button>
+          }
+        />
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
+          <h2 className="text-2xl font-bold mb-4">No matching projects found</h2>
+          <button onClick={onBack} className="btn btn-primary rounded-full">Try a different prompt</button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`flex flex-col bg-base-200/50 ${activeView === 'map' ? 'h-screen p-4 md:p-6 overflow-hidden' : 'min-h-screen p-4 md:p-8'}`}>
+    <div className={`flex flex-col bg-base-200/50 ${activeView === 'map' ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
       
-      {/* Header */}
-      <div className={`w-full max-w-6xl mx-auto flex justify-between items-center ${activeView === 'map' ? 'mb-4' : 'mb-12'}`}>
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
-        <button onClick={onBack} className="btn btn-ghost rounded-full px-6">
-          Start over
-        </button>
-      </div>
+      <TopNavigationBar 
+        badgeText="DISCOVERY"
+        rightElement={
+          <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-6 font-semibold">
+            Start over
+          </button>
+        }
+      />
 
-      <div className={`w-full max-w-6xl mx-auto flex-grow flex flex-col ${activeView === 'map' ? 'min-h-0' : ''}`}>
+      <div className={`w-full max-w-6xl mx-auto flex-grow flex flex-col px-4 ${activeView === 'map' ? 'py-4 min-h-0' : 'py-8'}`}>
         <div className={`flex flex-col md:flex-row md:items-end justify-between ${activeView === 'map' ? 'mb-4' : 'mb-10'} gap-4`}>
           <div className="text-center md:text-left">
             <h2 className="text-3xl md:text-4xl font-semibold text-base-content">
@@ -75,7 +82,7 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
 
         {/* Alternative Views */}
         {activeView === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
             {projects.map(project => (
               <div key={project.id} className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 group overflow-hidden">
                 
@@ -168,4 +175,3 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
     </div>
   );
 }
-
