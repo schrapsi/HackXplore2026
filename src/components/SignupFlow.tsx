@@ -13,8 +13,8 @@ interface SignupFlowProps {
 
 
 export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: SignupFlowProps) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState('Emma Fischer');
+  const [email, setEmail] = useState('emma.fischer@example.com');
   const [password, setPassword] = useState('');
   
   const [isProcessing, setIsProcessing] = useState(false);
@@ -79,6 +79,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
                 <input 
                   type="text" 
                   required
+                  autoFocus
                   placeholder="Alex Morgan" 
                   className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
                   value={name}
@@ -121,7 +122,10 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
           )}
 
           {step === 'payment' && (
-            <div className="flex flex-col items-center py-6 text-center animate-fade-in">
+            <form 
+              onSubmit={(e) => { e.preventDefault(); handleCommitFunds(); }}
+              className="flex flex-col items-center py-6 text-center animate-fade-in w-full"
+            >
               <div className="w-16 h-16 bg-success/20 text-success rounded-full flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
               </div>
@@ -129,7 +133,8 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
               <p className="text-base-content/70 mb-8">You are about to transfer the funds and officially kickstart the project.</p>
               
               <button 
-                onClick={handleCommitFunds}
+                type="submit"
+                autoFocus
                 disabled={isProcessing}
                 className="btn btn-primary w-full rounded-full text-lg shadow-xl"
               >
@@ -141,7 +146,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
                   'Authorize transfer'
                 )}
               </button>
-            </div>
+            </form>
           )}
 
           {step === 'success' && (
