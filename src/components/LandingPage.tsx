@@ -152,31 +152,32 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
             </button>
           </div>
 
-          {isSearching && (
-            <div className="mx-auto w-full max-w-xl rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-lg shadow-primary/10 animate-fade-in">
-              <div className="flex items-center gap-3">
-                <span className="loading loading-ring loading-md text-primary"></span>
-                <div>
-                  <p className="font-bold text-base-content">Analyzing your intent</p>
-                  <p className="text-sm text-base-content/60">Matching location, impact area, and commitment tier...</p>
-                </div>
-              </div>
-              <div className="mt-4 flex flex-col gap-2">
-                <div className="h-2 overflow-hidden rounded-full bg-base-300">
-                  <div className="h-full w-2/3 rounded-full bg-primary animate-pulse"></div>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-[11px] font-semibold uppercase tracking-wide text-base-content/50">
-                  <span>Location</span>
-                  <span>Audience</span>
-                  <span>Budget</span>
-                </div>
-              </div>
-            </div>
-          )}
-
         </form>
       </div>
       </div>
+      {isSearching && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="w-full max-w-md rounded-3xl border border-primary/20 bg-base-100 p-6 shadow-2xl shadow-primary/20">
+            <div className="flex items-center gap-4">
+              <span className="loading loading-ring loading-lg text-primary"></span>
+              <div>
+                <p className="text-lg font-bold text-base-content">Analyzing your intent</p>
+                <p className="text-sm text-base-content/60">Matching location, impact area, and commitment tier...</p>
+              </div>
+            </div>
+            <div className="mt-5 flex flex-col gap-2">
+              <div className="h-2 overflow-hidden rounded-full bg-base-300">
+                <div className="h-full w-2/3 rounded-full bg-primary animate-pulse"></div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[11px] font-semibold uppercase tracking-wide text-base-content/50">
+                <span>Location</span>
+                <span>Audience</span>
+                <span>Budget</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
