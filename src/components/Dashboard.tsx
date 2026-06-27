@@ -27,6 +27,24 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
   const [pitchMode, setPitchMode] = useState<'post' | 'video'>('post');
   const pitchVideoRef = useRef<HTMLVideoElement | null>(null);
 
+  const closePitchMode = () => {
+    setPitchPost(null);
+    setPitchMode('post');
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {
+        // Fullscreen can fail if the browser has already exited it.
+      });
+    }
+  };
+
+  const openPitchMode = (post: GlobalFeedItem) => {
+    setPitchPost(post);
+    setPitchMode('post');
+    document.documentElement.requestFullscreen?.().catch(() => {
+      // The overlay still works if fullscreen is blocked.
+    });
+  };
+
   // 1. Get projects supported by the user
   const supportedProjects = useMemo(() => {
     if (!user) return [];
@@ -131,8 +149,7 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
 
     const handlePitchKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setPitchPost(null);
-        setPitchMode('post');
+        closePitchMode();
         return;
       }
 
@@ -631,8 +648,7 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
                     item.supporterHub,
                     item.update.id === 'global-lbbw-initial-support'
                       ? () => {
-                          setPitchPost(item);
-                          setPitchMode('post');
+                          openPitchMode(item);
                         }
                       : undefined,
                   ))}
@@ -660,10 +676,7 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setPitchPost(null);
-                    setPitchMode('post');
-                  }}
+                  onClick={closePitchMode}
                   className="btn btn-ghost btn-sm rounded-full px-4"
                 >
                   Close
