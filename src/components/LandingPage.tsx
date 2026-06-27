@@ -25,6 +25,14 @@ const promptSuggestions = [
 
 const typingSpeedMs = 12
 const suggestionPauseMs = 1800
+const searchSteps = [
+  'Checking commitment tier',
+  'Reading intent',
+  'Ranking projects',
+]
+
+const searchStepDurationsMs = [700, 1300, 900]
+const searchCalculationDelayMs = searchStepDurationsMs.reduce((total, duration) => total + duration, 0)
 
 export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const [prompt, setPrompt] = useState('')
@@ -32,6 +40,7 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const [suggestionIndex, setSuggestionIndex] = useState(0)
   const [typedSuggestion, setTypedSuggestion] = useState('')
   const [isSearching, setIsSearching] = useState(false)
+  const [searchStepIndex, setSearchStepIndex] = useState(0)
 
   useEffect(() => {
     const suggestion = promptSuggestions[suggestionIndex]
@@ -60,6 +69,27 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
     }
   }, [suggestionIndex])
 
+  useEffect(() => {
+    if (!isSearching) {
+      setSearchStepIndex(0)
+      return
+    }
+
+    const stepTimeoutIds = searchStepDurationsMs.slice(0, -1).map((_, index) => {
+      const nextStepDelay = searchStepDurationsMs
+        .slice(0, index + 1)
+        .reduce((total, duration) => total + duration, 0)
+
+      return window.setTimeout(() => {
+        setSearchStepIndex(index + 1)
+      }, nextStepDelay)
+    })
+
+    return () => {
+      stepTimeoutIds.forEach(timeoutId => window.clearTimeout(timeoutId))
+    }
+  }, [isSearching])
+
   const budgetTiers = [
     { id: '20k-50k', label: '€20k - €50k' },
     { id: '50k-100k', label: '€50k - €100k' },
@@ -71,8 +101,10 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!prompt || !budget) return
+    setSearchStepIndex(0)
     setIsSearching(true)
     try {
+      await new Promise(resolve => window.setTimeout(resolve, searchCalculationDelayMs))
       await onSearch(prompt, budget)
     } finally {
       setIsSearching(false)
@@ -141,13 +173,58 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
               disabled={!prompt || !budget || isSearching}
               className="btn btn-primary btn-wide rounded-full text-lg h-14 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none"
             >
-              {isSearching ? <span className="loading loading-spinner"></span> : 'Find projects'}
+              {isSearching ? (
+                <>
+                  <span className="loading loading-spinner"></span>
+                  Calculating matches
+                </>
+              ) : 'Find projects'}
             </button>
           </div>
 
         </form>
       </div>
       </div>
+      {isSearching && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="w-full max-w-md rounded-3xl border border-primary/20 bg-base-100 p-6 shadow-2xl shadow-primary/20">
+            <div className="flex items-center gap-4">
+              <span className="loading loading-ring loading-lg text-primary"></span>
+              <div>
+                <p className="text-lg font-bold text-base-content">Analyzing your intent</p>
+                <p className="text-sm text-base-content/60">{searchSteps[searchStepIndex]}...</p>
+              </div>
+            </div>
+            <div className="mt-5 flex flex-col gap-2">
+              <div className="h-2 overflow-hidden rounded-full bg-base-300">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+                  style={{ width: `${((searchStepIndex + 1) / searchSteps.length) * 100}%` }}
+                ></div>
+              </div>
+              <ul className="mt-2 flex flex-col gap-2 text-sm">
+                {searchSteps.map((step, index) => (
+                  <li
+                    key={step}
+                    className={`flex items-center gap-2 transition-colors ${
+                      index <= searchStepIndex ? 'text-base-content' : 'text-base-content/40'
+                    }`}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        index <= searchStepIndex ? 'bg-primary' : 'bg-base-300'
+                      }`}
+                    ></span>
+                    <span className={index === searchStepIndex ? 'font-bold' : 'font-medium'}>
+                      {step}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

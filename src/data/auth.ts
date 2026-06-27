@@ -11,11 +11,6 @@ export const mockBackend = {
   // Simulate creating a new account
   async createAccount(name: string, email: string, hubBrandName: string): Promise<User> {
     await delay(800); // simulate network
-    
-    // Check if user already exists
-    if (usersDb.find(u => u.email === email || u.name === name)) {
-      throw new Error("User with this name or email already exists");
-    }
 
     const newUser: User = {
       id: Math.random().toString(36).substring(2, 9),
@@ -64,12 +59,6 @@ export const mockBackend = {
     return { ...currentUser };
   },
 
-  // Get current session
-  async getCurrentUser(): Promise<User | null> {
-    await delay(300);
-    return currentUser ? { ...currentUser } : null;
-  },
-  
   // Logout
   async logout(): Promise<void> {
     await delay(300);

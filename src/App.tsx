@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { ProjectDiscovery } from './components/ProjectDiscovery';
 import { SignupFlow } from './components/SignupFlow';
@@ -18,18 +18,6 @@ function App() {
   const [selectedBudget, setSelectedBudget] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  // Check user session on load
-  useEffect(() => {
-    const checkSession = async () => {
-      const user = await mockBackend.getCurrentUser();
-      if (user) {
-        setCurrentUser(user);
-        setStep('dashboard');
-      }
-    };
-    checkSession();
-  }, []);
 
   const handleSearch = async (prompt: string, budget: string) => {
     setSelectedBudget(budget);
@@ -56,14 +44,12 @@ function App() {
     setStep('signup');
   };
 
-  const handleSignupComplete = async () => {
-    const user = await mockBackend.getCurrentUser();
+  const handleSignupComplete = (user: User) => {
     setCurrentUser(user);
     setStep('dashboard');
   };
 
-  const handleLoginComplete = async () => {
-    const user = await mockBackend.getCurrentUser();
+  const handleLoginComplete = (user: User) => {
     setCurrentUser(user);
     setStep('dashboard');
   };
