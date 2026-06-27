@@ -58,6 +58,7 @@ export function ProjectDiscovery({ projects, onBack, onFundProject, onRefineSear
         }
       />
 
+
       <div className={`w-full max-w-6xl mx-auto px-4 md:px-8 py-6 flex-grow flex flex-col ${activeView === 'map' ? 'min-h-0' : ''}`}>
         <div className={`flex flex-col md:flex-row md:items-end justify-between ${activeView === 'map' ? 'mb-4' : 'mb-10'} gap-4`}>
           <div className="text-center md:text-left">
