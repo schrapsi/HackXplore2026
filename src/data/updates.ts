@@ -1,6 +1,32 @@
 import type { ProjectUpdate } from '../types';
 
 export const sampleUpdates: ProjectUpdate[] = [
+  // Karlsruhe After-School Maker Club
+  {
+    id: 'karlsruhe-maker-1',
+    projectId: 'karlsruhe-kids-maker-club',
+    title: 'Robotics Kits and Tool Carts Checked In',
+    description: 'The first hardware batch arrived in Durlach: robotics kits, microcontrollers, hand tools, safety goggles, and labeled storage boxes. Volunteers tested the parts, logged serial numbers, and packed the first project bins for the opening workshops.',
+    imageUrl: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=800',
+    date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'karlsruhe-maker-2',
+    projectId: 'karlsruhe-kids-maker-club',
+    title: 'Workshop Room Set Up for After-School Sessions',
+    description: 'The room layout is now ready for small groups: tables were moved into team islands, cable covers were installed, shelves were labeled, and a quiet homework corner was set aside so children can switch between study time and hands-on building.',
+    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=800',
+    date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'karlsruhe-maker-3',
+    projectId: 'karlsruhe-kids-maker-club',
+    title: 'Mentors Prepared the First Four Projects',
+    description: 'Local mentors finalized the starter sessions: LED name badges, simple cardboard robots, sensor-based plant monitors, and a collaborative marble run. The plan keeps tools low-risk for younger children while giving older students room to extend each build.',
+    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800',
+    date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+
   // p1: Clean Water Infrastructure
   {
     id: 'u1-1',
