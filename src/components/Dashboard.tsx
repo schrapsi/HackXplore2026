@@ -128,7 +128,7 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
               onClick={onNavigateHub}
               className="btn btn-outline btn-sm rounded-full px-4 font-semibold text-primary border-primary/20 hover:bg-primary hover:text-primary-content hover:border-primary transition-colors"
             >
-              Impact Hub
+              Top Impacts
             </button>
             <div className="flex items-center gap-2 ml-2">
               <div className="avatar placeholder">

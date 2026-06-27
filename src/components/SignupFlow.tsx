@@ -103,7 +103,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
               </div>
 
               <div className="form-control">
-                <label className="label"><span className="label-text font-medium">Impact Hub Brand</span></label>
+                <label className="label"><span className="label-text font-medium">Impact Hub Name</span></label>
                 <input 
                   type="text" 
                   required
