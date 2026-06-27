@@ -70,7 +70,7 @@ export const processUserInput = (prompt: string, budget: string): Project[] => {
   
   // If no keyword matched but we have budget matches, just return the budget matches
   if (sorted.length > 0 && sorted[0].score > 0) {
-     return sorted.map(({ score, ...project }) => project);
+     return sorted.map(({ score: _, ...project }) => project);
   }
   
   return budgetMatched;

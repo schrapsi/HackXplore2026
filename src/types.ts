@@ -19,3 +19,13 @@ export interface User {
     date: string;
   }[];
 }
+
+export interface ProjectUpdate {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  date: string;
+}
+

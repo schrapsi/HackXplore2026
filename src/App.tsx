@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { ProjectDiscovery } from './components/ProjectDiscovery';
 import { SignupFlow } from './components/SignupFlow';
+import { Dashboard } from './components/Dashboard';
 import { processUserInput } from './data/projects';
-import type { Project } from './types';
+import { mockBackend } from './data/auth';
+import type { Project, User } from './types';
 
 function App() {
   const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'dashboard'>('landing');
@@ -12,6 +14,19 @@ function App() {
   // Track selections across steps
   const [selectedBudget, setSelectedBudget] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Check user session on load
+  useEffect(() => {
+    const checkSession = async () => {
+      const user = await mockBackend.getCurrentUser();
+      if (user) {
+        setCurrentUser(user);
+        setStep('dashboard');
+      }
+    };
+    checkSession();
+  }, []);
 
   const handleSearch = (prompt: string, budget: string) => {
     setSelectedBudget(budget);
@@ -30,8 +45,16 @@ function App() {
     setStep('signup');
   };
 
-  const handleSignupComplete = () => {
+  const handleSignupComplete = async () => {
+    const user = await mockBackend.getCurrentUser();
+    setCurrentUser(user);
     setStep('dashboard');
+  };
+
+  const handleLogout = async () => {
+    await mockBackend.logout();
+    setCurrentUser(null);
+    setStep('landing');
   };
 
   return (
@@ -58,15 +81,11 @@ function App() {
       )}
 
       {step === 'dashboard' && (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4">
-          <h2 className="text-4xl font-bold text-primary mb-4">Dashboard</h2>
-          <p className="text-lg text-base-content/70">
-            Welcome to your impact dashboard. Step 4 is coming soon!
-          </p>
-          <button onClick={handleGoBack} className="btn btn-outline mt-8 rounded-full">
-            Fund Another Project
-          </button>
-        </div>
+        <Dashboard 
+          user={currentUser} 
+          onLogout={handleLogout} 
+          onFundAnother={handleGoBack} 
+        />
       )}
     </>
   );
