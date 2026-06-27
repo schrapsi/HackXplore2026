@@ -48,16 +48,16 @@ function App() {
           {/* Budget Selection */}
           <div className="flex flex-col items-center gap-4 mt-4">
             <span className="text-sm font-medium uppercase tracking-widest text-base-content/60">Select Commitment Tier</span>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-4">
               {budgetTiers.map((tier) => (
                 <button
                   key={tier.id}
                   type="button"
                   onClick={() => setBudget(tier.id)}
-                  className={`btn btn-outline rounded-full px-6 border-base-content/20 hover:border-primary transition-all ${
+                  className={`btn rounded-full px-8 text-base border-2 transition-all duration-300 ${
                     budget === tier.id 
-                      ? 'bg-primary text-primary-content border-primary shadow-lg scale-105 hover:bg-primary-focus' 
-                      : 'hover:bg-base-200'
+                      ? 'bg-accent text-accent-content border-accent shadow-xl shadow-accent/30 scale-110 ring-4 ring-accent/20' 
+                      : 'bg-base-200 border-transparent text-base-content hover:bg-base-300 hover:border-base-content/20'
                   }`}
                 >
                   {tier.label}

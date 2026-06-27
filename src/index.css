@@ -1,6 +1,28 @@
 @import "tailwindcss";
+
 @plugin "daisyui" {
-  themes: light dark cupcake synthwave;
+  themes: lbbw --default, light, dark, cupcake, synthwave;
+}
+
+@plugin "daisyui/theme" {
+  name: "lbbw";
+  default: true;
+  --color-primary: #004a99;
+  --color-primary-content: #ffffff;
+  --color-secondary: #7e8387;
+  --color-secondary-content: #ffffff;
+  --color-accent: #00a3e0;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1a1a1a;
+  --color-neutral-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f4f4f4;
+  --color-base-300: #e0e6eb;
+  --color-base-content: #1a1a1a;
+  --color-info: #00a3e0;
+  --color-success: #2e7d32;
+  --color-warning: #f59e0b;
+  --color-error: #d32f2f;
 }
 
 @theme {
