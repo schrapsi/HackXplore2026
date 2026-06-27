@@ -311,18 +311,30 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
                     key={update.id} 
                     className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl overflow-hidden group"
                   >
-                    {/* Update Header: Project Info */}
+                    {/* Update Header: Funder Info */}
                     <div className="p-6 pb-4 flex justify-between items-start gap-4">
                       <div className="flex items-center gap-3">
-                        <img 
-                          src={project?.imageUrl} 
-                          alt={project?.title} 
-                          className="w-10 h-10 rounded-full object-cover border border-base-300"
-                        />
+                        {user.avatarUrl ? (
+                          <img 
+                            src={user.avatarUrl} 
+                            alt={user.name} 
+                            className="w-10 h-10 rounded-full object-cover border border-base-300 shadow-sm"
+                          />
+                        ) : (
+                          <div className="avatar placeholder">
+                            <div className="bg-primary/10 text-primary rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm border border-primary/20">
+                              {user.name.charAt(0).toUpperCase()}
+                            </div>
+                          </div>
+                        )}
                         <div>
-                          <h4 className="text-sm font-bold text-primary hover:underline cursor-pointer">
-                            {project?.title}
-                          </h4>
+                          <div className="text-sm">
+                            <span className="font-extrabold text-base-content">{user.name}</span>
+                            <span className="text-base-content/65 font-medium"> supported </span>
+                            <span className="font-extrabold text-primary hover:underline cursor-pointer">
+                              {project?.title}
+                            </span>
+                          </div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-xs text-base-content/40 font-medium">
                               {formatDate(update.date)}

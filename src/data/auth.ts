@@ -14,6 +14,7 @@ export const mockBackend = {
       id: Math.random().toString(36).substring(2, 9),
       name,
       email,
+      avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120`,
       fundedProjects: []
     };
     return currentUser;

@@ -13,6 +13,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  avatarUrl?: string;
   fundedProjects: {
     projectId: string;
     amountCommitted: string;
