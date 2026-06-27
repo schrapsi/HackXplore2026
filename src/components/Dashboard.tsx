@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import type { User, Project, ProjectUpdate } from '../types';
 import { sampleProjects, calculateTotalCommitment } from '../data/projects';
 import { sampleUpdates, getUpdatesForProject } from '../data/updates';
+import { MetricChart } from './MetricChart';
 
 interface DashboardProps {
   user: User | null;
@@ -300,8 +301,19 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
 
         </section>
 
-        {/* ==================== RIGHT COLUMN (2/3): LIVE UPDATES FEED ==================== */}
+        {/* ==================== RIGHT COLUMN (2/3): LIVE UPDATES FEED & DIAGRAMS ==================== */}
         <section className="lg:col-span-2 flex flex-col gap-6">
+          
+          {/* Project Impact Metrics Diagram */}
+          {(() => {
+            const activeChartProject = selectedProjectId 
+              ? supportedProjects.find(p => p.project.id === selectedProjectId)?.project 
+              : supportedProjects[0]?.project;
+            return activeChartProject ? (
+              <MetricChart metric={activeChartProject.metric} />
+            ) : null;
+          })()}
+
           <div className="flex justify-between items-center">
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Live Impact Feed</h2>
             <div className="badge badge-neutral shadow-sm font-medium py-3 px-3">

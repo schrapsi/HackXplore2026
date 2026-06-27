@@ -28,10 +28,22 @@ export interface Project {
   imageUrl: string;
   logoUrl: string;
   impactMetric: string;
+  metric: ProjectMetric;
   coordinates: {
     lat: number;
     lng: number;
   };
+}
+
+export interface MetricDataPoint {
+  date: string;
+  value: number;
+}
+
+export interface ProjectMetric {
+  name: string;
+  unit: string;
+  dataPoints: MetricDataPoint[];
 }
 
 export interface User {
