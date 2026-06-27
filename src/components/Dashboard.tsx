@@ -159,9 +159,11 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
                 <span className="text-4xl md:text-5xl font-black tracking-tight text-primary">
                   {supportedProjects.length > 0 
                     ? `$${supportedProjects.reduce((acc, curr) => {
-                        // Estimate commitment numerically for dashboard sum display
-                        const val = curr.commitment.includes('200k+') ? 200000 : parseInt(curr.commitment.split('-')[0].replace('k', '')) * 1000;
-                        return acc + val;
+                        const numericVal = parseFloat(curr.commitment);
+                        if (!isNaN(numericVal)) {
+                          return acc + numericVal;
+                        }
+                        return acc + (curr.project.initialCost + 10 * curr.project.runningCostsPerYear);
                       }, 0).toLocaleString()}`
                     : '$0'
                   }
