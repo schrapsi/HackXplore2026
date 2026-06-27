@@ -3,6 +3,7 @@ import type { User, Project, ProjectUpdate } from '../types';
 import { sampleProjects, calculateTotalCommitment } from '../data/projects';
 import { sampleUpdates, getUpdatesForProject } from '../data/updates';
 import { MetricChart } from './MetricChart';
+import { TopNavigationBar } from './TopNavigationBar';
 
 interface DashboardProps {
   user: User | null;
@@ -119,39 +120,35 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content font-sans pb-16">
-      {/* 🚀 Brand & User Header (Neobroker Style: minimal, sticky, blurred) */}
-      <header className="sticky top-0 z-30 bg-base-100/80 backdrop-blur-md border-b border-base-300 py-4 px-6 md:px-12 flex justify-between items-center transition-all">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</span>
-          <span className="badge badge-sm badge-outline badge-neutral">DASHBOARD</span>
-        </div>
-
-          <div className="flex items-center gap-4">
+      <TopNavigationBar 
+        badgeText="DASHBOARD"
+        rightElement={
+          <>
             <button 
               onClick={onNavigateHub}
               className="btn btn-outline btn-sm rounded-full px-4 font-semibold text-primary border-primary/20 hover:bg-primary hover:text-primary-content hover:border-primary transition-colors"
             >
               Impact Hub
             </button>
-            <div className="flex items-center gap-2">
-            <div className="avatar placeholder">
-              <div className="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-inner">
-                {user.name.charAt(0).toUpperCase()}
+            <div className="flex items-center gap-2 ml-2">
+              <div className="avatar placeholder">
+                <div className="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shadow-inner">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              </div>
+              <div className="hidden sm:block text-left mr-2">
+                <p className="text-xs font-semibold leading-tight truncate max-w-[100px]">{user.name}</p>
               </div>
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-sm font-semibold leading-tight">{user.name}</p>
-              <p className="text-xs text-base-content/50">{user.email}</p>
-            </div>
-          </div>
-          <button 
-            onClick={onLogout}
-            className="btn btn-ghost btn-sm rounded-full px-4 text-xs font-semibold text-error hover:bg-error/10 hover:text-error"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+            <button 
+              onClick={onLogout}
+              className="btn btn-ghost btn-sm rounded-full px-3 text-xs font-semibold text-error hover:bg-error/10 hover:text-error"
+            >
+              Logout
+            </button>
+          </>
+        }
+      />
 
       {/* 📂 Main Content Layout (Grid) */}
       <main className="max-w-6xl mx-auto px-4 md:px-8 mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">

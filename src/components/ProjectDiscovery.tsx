@@ -1,5 +1,6 @@
 import type { Project } from '../types';
 import { calculateTotalCommitment } from '../data/projects';
+import { TopNavigationBar } from './TopNavigationBar';
 
 interface ProjectDiscoveryProps {
   projects: Project[];
@@ -10,30 +11,35 @@ interface ProjectDiscoveryProps {
 export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDiscoveryProps) {
   if (projects.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h2 className="text-3xl font-semibold mb-4">No exact matches found</h2>
-        <p className="text-base-content/70 mb-8 text-center max-w-md">
-          We couldn't find a project matching your exact criteria and budget. Try adjusting your prompt or commitment tier.
-        </p>
-        <button onClick={onBack} className="btn btn-outline btn-primary rounded-full px-8">
-          Go back
-        </button>
+      <div className="min-h-screen flex flex-col bg-base-100">
+        <TopNavigationBar 
+          badgeText="DISCOVERY"
+          rightElement={
+            <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-6 font-semibold">
+              Cancel
+            </button>
+          }
+        />
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
+          <h2 className="text-2xl font-bold mb-4">No matching projects found</h2>
+          <button onClick={onBack} className="btn btn-primary rounded-full">Try a different prompt</button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 md:p-8 bg-base-200/50">
-      
-      {/* Header */}
-      <div className="w-full max-w-6xl mx-auto flex justify-between items-center mb-12">
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
-        <button onClick={onBack} className="btn btn-ghost rounded-full px-6">
-          Start over
-        </button>
-      </div>
+    <div className="min-h-screen bg-base-200/50 flex flex-col">
+      <TopNavigationBar 
+        badgeText="DISCOVERY"
+        rightElement={
+          <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-6 font-semibold">
+            Start over
+          </button>
+        }
+      />
 
-      <div className="w-full max-w-6xl mx-auto">
+      <div className="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
         <div className="mb-10 text-center md:text-left">
           <h2 className="text-3xl md:text-4xl font-semibold text-base-content">
             Curated projects for you
