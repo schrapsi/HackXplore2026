@@ -21,12 +21,19 @@ The platform facilitates a seamless four-step journey:
 
 3. **Commitment & Onboarding**
    - Once a project is selected, the user enters a streamlined account creation workflow.
+   - During account creation, users are asked to name their **"Impact Hub brand"** (their personal philanthropic identity).
    - The workflow culminates in a secure commitment and payment process to fund the chosen project.
 
 4. **Dashboard & Transparency**
    - **Live Updates:** Logged-in users access a dashboard providing total transparency on how their funds are utilized.
    - **Tangible Metrics:** Continuous updates and real-time metrics on the funded projects' impact.
    - **Repeat Funding:** Users can initiate new funding processes directly from their dashboard.
+
+5. **The Impact Hub (Leaderboard & Community)**
+   - Accessible via a button on the user's dashboard, the Impact Hub is a competitive and community-driven space.
+   - **Podium Presentation:** Showcases the Top 3 "Impacters" (highest committed funds) visually styled like an Olympic medalist presentation.
+   - **Leaderboard:** A continued list below the podium displays the runners-up (ranks 4 through 10).
+   - Showcases the different personal Impact Hub brands and how much they have committed to society.
 
 ## Tech Stack
 *(Refer to [SPEC.md](./SPEC.md) for detailed technical specifications including React, Vite, daisyUI, Tailwind CSS, and Vercel deployment.)*
