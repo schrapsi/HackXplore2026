@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { User, Project, ProjectUpdate } from '../types';
-import { sampleProjects } from '../data/projects';
+import { sampleProjects, calculateTotalCommitment } from '../data/projects';
 import { sampleUpdates, getUpdatesForProject } from '../data/updates';
 
 interface DashboardProps {
@@ -158,16 +158,36 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
               <div className="flex items-baseline gap-1 mt-1">
                 <span className="text-4xl md:text-5xl font-black tracking-tight text-primary">
                   {supportedProjects.length > 0 
-                    ? `$${supportedProjects.reduce((acc, curr) => {
-                        // Estimate commitment numerically for dashboard sum display
-                        const val = curr.commitment.includes('200k+') ? 200000 : parseInt(curr.commitment.split('-')[0].replace('k', '')) * 1000;
-                        return acc + val;
+                    ? `€${supportedProjects.reduce((acc, curr) => {
+                        const numericVal = parseFloat(curr.commitment);
+                        if (!isNaN(numericVal)) {
+                          return acc + numericVal;
+                        }
+                        return acc + calculateTotalCommitment(curr.project.initialCost, curr.project.runningCostsPerYear);
                       }, 0).toLocaleString()}`
-                    : '$0'
+                    : '€0'
                   }
                 </span>
-                <span className="text-xs font-medium text-base-content/50 uppercase">USD</span>
+                <span className="text-xs font-medium text-base-content/50 uppercase">EUR</span>
               </div>
+              
+              {/* Cost breakdown for prototype (single project assumption) */}
+              {supportedProjects.length > 0 && (
+                <div className="mt-3 bg-base-100/50 rounded-2xl p-3 border border-base-300/30 flex flex-col gap-1.5 text-xs text-base-content/80">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-base-content/50">Initial Launch Cost</span>
+                    <span className="font-extrabold text-base-content">€{supportedProjects[0].project.initialCost.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-base-content/50">Yearly Running Cost</span>
+                    <span className="font-extrabold text-base-content">€{supportedProjects[0].project.runningCostsPerYear.toLocaleString()}/yr</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[10px] text-success font-medium">
+                    <span>Maintenance Fund (upkeep covered)</span>
+                    <span>€{(supportedProjects[0].project.runningCostsPerYear / 0.04).toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4 border-t border-base-300/80 pt-4">
@@ -270,7 +290,7 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{item.project.title}</p>
                     <p className="text-xs opacity-60 truncate">
-                      Initial: ${item.project.initialCost.toLocaleString()} • Running: ${item.project.runningCostsPerYear.toLocaleString()}/yr
+                      Initial: €{item.project.initialCost.toLocaleString()} • Running: €{item.project.runningCostsPerYear.toLocaleString()}/yr
                     </p>
                   </div>
                 </button>
