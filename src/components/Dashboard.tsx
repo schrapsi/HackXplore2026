@@ -306,11 +306,19 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
               Top Impacts
             </button>
             <div className="flex items-center gap-2 ml-2">
-              <div className="avatar placeholder">
-                <div className="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shadow-inner">
-                  {user.name.charAt(0).toUpperCase()}
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.name}
+                  className="w-8 h-8 rounded-full object-cover border border-base-300 shadow-sm"
+                />
+              ) : (
+                <div className="avatar placeholder">
+                  <div className="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shadow-inner">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="hidden sm:block text-left mr-2">
                 <p className="text-xs font-semibold leading-tight truncate max-w-[100px]">{user.name}</p>
               </div>

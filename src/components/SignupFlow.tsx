@@ -13,10 +13,10 @@ interface SignupFlowProps {
 import { TopNavigationBar } from './TopNavigationBar';
 
 export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: SignupFlowProps) {
-  const [name, setName] = useState('Emma Fischer');
-  const [email, setEmail] = useState('emma.fischer@example.com');
+  const [name, setName] = useState('Tom Foster');
+  const [email, setEmail] = useState('tom.foster@example.com');
   const [password, setPassword] = useState('demo-password-2026');
-  const [hubBrandName, setHubBrandName] = useState('Emmis Good Will');
+  const [hubBrandName, setHubBrandName] = useState("Tom's Good Will");
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
