@@ -71,9 +71,17 @@ export function ProjectDiscovery({ projects, onBack, onFundProject, onRefineSear
           
           {/* View Toggler */}
           <div className="flex justify-center md:justify-end">
-            <div className="join bg-base-100 p-1 rounded-full shadow-sm border border-base-300">
+            <div className="relative grid grid-cols-2 bg-base-100 p-1 rounded-full shadow-sm border border-base-300 w-full sm:w-72">
+              <span
+                className={`absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-primary shadow-sm transition-transform duration-300 ease-out ${
+                  activeView === 'map' ? 'translate-x-full' : 'translate-x-0'
+                }`}
+                aria-hidden="true"
+              ></span>
               <button 
-                className={`btn btn-sm rounded-full px-5 ${activeView === 'grid' ? 'btn-primary text-primary-content' : 'btn-ghost'}`}
+                className={`relative z-10 flex items-center justify-center rounded-full px-5 py-2 text-sm font-bold transition-colors duration-300 ${
+                  activeView === 'grid' ? 'text-primary-content' : 'text-base-content/70 hover:text-base-content'
+                }`}
                 onClick={() => setActiveView('grid')}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
@@ -82,7 +90,9 @@ export function ProjectDiscovery({ projects, onBack, onFundProject, onRefineSear
                 Card Grid
               </button>
               <button 
-                className={`btn btn-sm rounded-full px-5 ${activeView === 'map' ? 'btn-primary text-primary-content' : 'btn-ghost'}`}
+                className={`relative z-10 flex items-center justify-center rounded-full px-5 py-2 text-sm font-bold transition-colors duration-300 ${
+                  activeView === 'map' ? 'text-primary-content' : 'text-base-content/70 hover:text-base-content'
+                }`}
                 onClick={() => setActiveView('map')}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
