@@ -15,7 +15,7 @@ import { TopNavigationBar } from './TopNavigationBar';
 export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: SignupFlowProps) {
   const [name, setName] = useState('Emma Fischer');
   const [email, setEmail] = useState('emma.fischer@example.com');
-  const [password, setPassword] = useState('pw');
+  const [password, setPassword] = useState('demo-password-2026');
   const [hubBrandName, setHubBrandName] = useState('Emmis Good Will');
   
   const [isProcessing, setIsProcessing] = useState(false);
