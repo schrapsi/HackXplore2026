@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { ProjectDiscovery } from './components/ProjectDiscovery';
 import { SignupFlow } from './components/SignupFlow';
+import { LoginFlow } from './components/LoginFlow';
 import { Dashboard } from './components/Dashboard';
 import { processUserInput } from './data/projects';
 import { mockBackend } from './data/auth';
 import type { Project, User } from './types';
 
 function App() {
-  const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'dashboard'>('landing');
+  const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'login' | 'dashboard'>('landing');
   const [matchedProjects, setMatchedProjects] = useState<Project[]>([]);
   
   // Track selections across steps
@@ -51,6 +52,12 @@ function App() {
     setStep('dashboard');
   };
 
+  const handleLoginComplete = async () => {
+    const user = await mockBackend.getCurrentUser();
+    setCurrentUser(user);
+    setStep('dashboard');
+  };
+
   const handleLogout = async () => {
     await mockBackend.logout();
     setCurrentUser(null);
@@ -60,7 +67,7 @@ function App() {
   return (
     <>
       {step === 'landing' && (
-        <LandingPage onSearch={handleSearch} />
+        <LandingPage onSearch={handleSearch} onNavigateLogin={() => setStep('login')} />
       )}
       
       {step === 'discovery' && (
@@ -77,6 +84,13 @@ function App() {
           budgetTier={selectedBudget}
           onBack={() => setStep('discovery')}
           onComplete={handleSignupComplete}
+        />
+      )}
+
+      {step === 'login' && (
+        <LoginFlow 
+          onBack={handleGoBack} 
+          onComplete={handleLoginComplete} 
         />
       )}
 
