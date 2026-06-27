@@ -164,9 +164,10 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
 
           {step === 'success' && (
             <div className="flex flex-col items-center py-8 text-center animate-fade-in">
-              <span className="text-6xl mb-4">✓</span>
+              <span className="text-6xl text-success mb-4">✓</span>
               <h3 className="text-2xl font-bold text-base-content mb-2">Thank you, {name}!</h3>
-              <p className="text-base-content/70">Your funds have been committed. Redirecting to your dashboard...</p>
+              <p className="text-base-content/70 mb-4">Your funds have been committed. Redirecting to your dashboard...</p>
+              <span className="loading loading-spinner loading-sm text-primary"></span>
             </div>
           )}
         </div>
