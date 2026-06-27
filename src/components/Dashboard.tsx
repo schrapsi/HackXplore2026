@@ -22,6 +22,7 @@ interface GlobalFeedItem {
 export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: DashboardProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [likedUpdates, setLikedUpdates] = useState<Set<string>>(new Set());
+  const [selectedFeed, setSelectedFeed] = useState<'personal' | 'global'>('personal');
 
   // 1. Get projects supported by the user
   const supportedProjects = useMemo(() => {
@@ -492,15 +493,39 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
             ) : null;
           })()}
 
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Personal Feed</h2>
-            <div className="badge badge-neutral shadow-sm font-medium py-3 px-3">
-              {feedUpdates.length} Updates
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+                {selectedFeed === 'personal' ? 'Personal Feed' : 'Global Feed'}
+              </h2>
+              <div className="badge badge-neutral shadow-sm font-medium py-3 px-3 mt-2">
+                {selectedFeed === 'personal' ? feedUpdates.length : globalFeedItems.length} Updates
+              </div>
+            </div>
+            <div className="join bg-base-200 p-1 rounded-full border border-base-300 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setSelectedFeed('personal')}
+                className={`btn btn-sm join-item rounded-full flex-1 sm:flex-none px-5 ${
+                  selectedFeed === 'personal' ? 'btn-primary' : 'btn-ghost'
+                }`}
+              >
+                Personal
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedFeed('global')}
+                className={`btn btn-sm join-item rounded-full flex-1 sm:flex-none px-5 ${
+                  selectedFeed === 'global' ? 'btn-primary' : 'btn-ghost'
+                }`}
+              >
+                Global
+              </button>
             </div>
           </div>
 
           {/* Fallback Empty Feed State */}
-          {feedUpdates.length === 0 ? (
+          {selectedFeed === 'personal' && feedUpdates.length === 0 ? (
             <div className="card bg-base-100 border border-base-300 shadow-sm p-12 rounded-3xl flex flex-col items-center justify-center text-center">
               <span className="text-4xl mb-4">🌱</span>
               <h3 className="text-lg font-bold">No active updates yet</h3>
@@ -516,33 +541,23 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
             </div>
           ) : (
             <div className="flex flex-col gap-6">
-              {feedUpdates.map(update => renderFeedCard(
-                update,
-                sampleProjects.find(p => p.id === update.projectId),
-                user.name,
-                user.avatarUrl,
-              ))}
+              {selectedFeed === 'personal'
+                ? feedUpdates.map(update => renderFeedCard(
+                    update,
+                    sampleProjects.find(p => p.id === update.projectId),
+                    user.name,
+                    user.avatarUrl,
+                  ))
+                : globalFeedItems.map(item => renderFeedCard(
+                    item.update,
+                    sampleProjects.find(project => project.id === item.update.projectId),
+                    item.supporterName,
+                    item.avatarUrl,
+                    item.supporterHub,
+                  ))}
             </div>
           )}
 
-          <div className="divider my-2"></div>
-
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Global Feed</h2>
-            <div className="badge badge-neutral shadow-sm font-medium py-3 px-3">
-              {globalFeedItems.length} Updates
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            {globalFeedItems.map(item => renderFeedCard(
-              item.update,
-              sampleProjects.find(project => project.id === item.update.projectId),
-              item.supporterName,
-              item.avatarUrl,
-              item.supporterHub,
-            ))}
-          </div>
         </section>
 
       </main>
