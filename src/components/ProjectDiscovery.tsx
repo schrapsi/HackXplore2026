@@ -10,12 +10,12 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
   if (projects.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h2 className="text-3xl font-semibold mb-4">Keine exakten Treffer gefunden</h2>
+        <h2 className="text-3xl font-semibold mb-4">No exact matches found</h2>
         <p className="text-base-content/70 mb-8 text-center max-w-md">
-          Wir konnten kein Projekt finden, das genau zu deinen Kriterien und deinem Budget passt. Passe deine Eingabe oder Budgetstufe an.
+          We couldn't find a project matching your exact criteria and budget. Try adjusting your prompt or commitment tier.
         </p>
         <button onClick={onBack} className="btn btn-outline btn-primary rounded-full px-8">
-          Zurück
+          Go back
         </button>
       </div>
     );
@@ -28,17 +28,17 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
       <div className="w-full max-w-6xl mx-auto flex justify-between items-center mb-12">
         <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT</h1>
         <button onClick={onBack} className="btn btn-ghost rounded-full px-6">
-          Neu starten
+          Start over
         </button>
       </div>
 
       <div className="w-full max-w-6xl mx-auto">
         <div className="mb-10 text-center md:text-left">
           <h2 className="text-3xl md:text-4xl font-semibold text-base-content">
-            Kuratierte Projekte für dich
+            Curated projects for you
           </h2>
           <p className="text-base-content/60 mt-2 text-lg">
-            Basierend auf deiner Eingabe findest du hier die wirkungsvollsten Initiativen, die du heute fördern kannst.
+            Based on your input, here are the most impactful initiatives you can fund today.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
                 <div className="divider my-2"></div>
                 
                 <div className="flex flex-col gap-1 mb-4">
-                  <span className="text-xs uppercase font-bold text-accent tracking-wider">Geschätzte Wirkung</span>
+                  <span className="text-xs uppercase font-bold text-accent tracking-wider">Estimated impact</span>
                   <span className="text-base-content font-medium">{project.impactMetric}</span>
                 </div>
 
@@ -76,7 +76,7 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
                     onClick={() => onFundProject(project)}
                     className="btn btn-primary w-full rounded-full shadow-md text-lg h-12"
                   >
-                    Dieses Projekt fördern
+                    Fund this project
                   </button>
                 </div>
               </div>
