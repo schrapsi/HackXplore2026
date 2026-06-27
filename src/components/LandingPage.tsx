@@ -25,6 +25,7 @@ const promptSuggestions = [
 
 const typingSpeedMs = 12
 const suggestionPauseMs = 1800
+const searchCalculationDelayMs = 1400
 
 export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const [prompt, setPrompt] = useState('')
@@ -73,6 +74,7 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
     if (!prompt || !budget) return
     setIsSearching(true)
     try {
+      await new Promise(resolve => window.setTimeout(resolve, searchCalculationDelayMs))
       await onSearch(prompt, budget)
     } finally {
       setIsSearching(false)
@@ -141,9 +143,36 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
               disabled={!prompt || !budget || isSearching}
               className="btn btn-primary btn-wide rounded-full text-lg h-14 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none"
             >
-              {isSearching ? <span className="loading loading-spinner"></span> : 'Find projects'}
+              {isSearching ? (
+                <>
+                  <span className="loading loading-spinner"></span>
+                  Calculating matches
+                </>
+              ) : 'Find projects'}
             </button>
           </div>
+
+          {isSearching && (
+            <div className="mx-auto w-full max-w-xl rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-lg shadow-primary/10 animate-fade-in">
+              <div className="flex items-center gap-3">
+                <span className="loading loading-ring loading-md text-primary"></span>
+                <div>
+                  <p className="font-bold text-base-content">Analyzing your intent</p>
+                  <p className="text-sm text-base-content/60">Matching location, impact area, and commitment tier...</p>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-col gap-2">
+                <div className="h-2 overflow-hidden rounded-full bg-base-300">
+                  <div className="h-full w-2/3 rounded-full bg-primary animate-pulse"></div>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-[11px] font-semibold uppercase tracking-wide text-base-content/50">
+                  <span>Location</span>
+                  <span>Audience</span>
+                  <span>Budget</span>
+                </div>
+              </div>
+            </div>
+          )}
 
         </form>
       </div>

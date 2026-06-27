@@ -936,9 +936,9 @@ const karlsruheChildrenProjects: Project[] = [
       'karlsruhe',
       'local',
     ],
-    initialCost: 92000,
-    runningCostsPerYear: 2800,
-    imageUrl: 'https://images.unsplash.com/photo-1544776193-352d25ca82cd?auto=format&fit=crop&q=80&w=800',
+    initialCost: 38000,
+    runningCostsPerYear: 3200,
+    imageUrl: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=800',
     logoUrl: getLogoForProject('Karlsruhe Kindergarten Garden Rooms'),
     impactMetric: 'Gives 140 kindergarten children safer daily play and learning space',
     metric: generateMockMetricData(ImpactCategory.ChildrenAndFamilies, 0),
@@ -966,8 +966,8 @@ const karlsruheChildrenProjects: Project[] = [
       'karlsruhe',
       'local',
     ],
-    initialCost: 110000,
-    runningCostsPerYear: 2400,
+    initialCost: 30000,
+    runningCostsPerYear: 3200,
     imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800',
     logoUrl: getLogoForProject('Karlsruhe After-School Maker Club'),
     impactMetric: 'Runs weekly learning clubs for 220 Karlsruhe children',
@@ -996,8 +996,8 @@ const karlsruheChildrenProjects: Project[] = [
       'karlsruhe',
       'local',
     ],
-    initialCost: 78000,
-    runningCostsPerYear: 3200,
+    initialCost: 34000,
+    runningCostsPerYear: 3000,
     imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800',
     logoUrl: getLogoForProject('Karlsruhe Kids Play and Sports Fund'),
     impactMetric: 'Enables 360 children to join weekly play and sports sessions',
@@ -1008,6 +1008,8 @@ const karlsruheChildrenProjects: Project[] = [
     },
   },
 ];
+
+const karlsruheChildrenProjectIds = karlsruheChildrenProjects.map(project => project.id);
 
 export const sampleProjects: Project[] = [
   ...karlsruheChildrenProjects,
@@ -1052,13 +1054,12 @@ export const processUserInput = async (prompts: string[], budget: string): Promi
     ['kids', 'kinder', 'kind', 'child', 'children', 'youth', 'jugend'].some(keyword => normalizedPrompt.includes(keyword));
 
   if (asksForKarlsruheKids) {
-    const karlsruheKidsMatches = budgetMatched.filter(project =>
-      project.location.toLowerCase() === 'karlsruhe' &&
-      project.category.some(category => ['kids', 'kinder', 'kindergarten', 'kita', 'children', 'youth', 'jugend'].includes(category))
-    );
+    const karlsruheKidsMatches = karlsruheChildrenProjectIds
+      .map(projectId => budgetMatched.find(project => project.id === projectId))
+      .filter((project): project is Project => project !== undefined);
 
     if (karlsruheKidsMatches.length >= 3) {
-      return karlsruheKidsMatches.slice(0, 3);
+      return karlsruheKidsMatches;
     }
   }
 
