@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { User, Project, ProjectUpdate } from '../types';
 import { sampleProjects, calculateTotalCommitment } from '../data/projects';
 import { sampleUpdates, getUpdatesForProject } from '../data/updates';
@@ -23,6 +23,9 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [likedUpdates, setLikedUpdates] = useState<Set<string>>(new Set());
   const [selectedFeed, setSelectedFeed] = useState<'personal' | 'global'>('personal');
+  const [pitchPost, setPitchPost] = useState<GlobalFeedItem | null>(null);
+  const [pitchMode, setPitchMode] = useState<'post' | 'video'>('post');
+  const pitchVideoRef = useRef<HTMLVideoElement | null>(null);
 
   // 1. Get projects supported by the user
   const supportedProjects = useMemo(() => {
@@ -67,47 +70,90 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
   }, [user, selectedProjectId]);
 
   const globalFeedItems: GlobalFeedItem[] = useMemo(() => {
-    const supporters = [
+    return [
       {
-        updateId: 'u4-1',
-        supporterName: 'Elena R.',
-        supporterHub: "Elena's Ocean Rescue",
+        supporterName: 'Mira S.',
+        supporterHub: 'Karlsruhe Kids Fund',
         avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120',
+        update: {
+          id: 'global-karlsruhe-kindergarten-launch',
+          projectId: 'karlsruhe-kids-kindergarten',
+          title: 'Kindergarten courtyard upgrade approved',
+          description: 'The first planning session with educators and parents is complete. The team is prioritizing shaded outdoor learning areas, safer play surfaces, and sensory planting for daily kindergarten use.',
+          imageUrl: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=800',
+          date: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+        },
       },
       {
-        updateId: 'u2-1',
-        supporterName: 'Marcus T.',
-        supporterHub: 'The Green Horizon',
-        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120',
+        supporterName: 'Impact.',
+        supporterHub: 'HackXplore 2026',
+        avatarUrl: '/impact_by_lbbw.svg',
+        update: {
+          id: 'global-lbbw-initial-support',
+          projectId: 'karlsruhe-kids-maker-club',
+          title: 'Impact. thanks LBBW for their support',
+          description: 'LBBW helped us turn this impact-matching platform into a working prototype. Their support gave the team room to validate the idea, sharpen the project experience, and connect funding intent with concrete local outcomes.',
+          imageUrl: '/team_image.jpeg',
+          date: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(),
+        },
       },
       {
-        updateId: 'u3-1',
         supporterName: 'Sarah J.',
         supporterHub: 'Sarah Cares',
         avatarUrl: 'https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&q=80&w=120',
+        update: {
+          id: 'global-maker-club-materials',
+          projectId: 'karlsruhe-kids-maker-club',
+          title: 'First maker kits selected for after-school sessions',
+          description: 'Mentors have selected beginner-friendly robotics kits, craft materials, and learning modules for the first Karlsruhe after-school maker club cohort.',
+          imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800',
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        },
       },
       {
-        updateId: 'u1-1',
         supporterName: 'David K.',
         supporterHub: 'Future Builders',
         avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=120',
+        update: {
+          id: 'global-sports-fund-coaches',
+          projectId: 'karlsruhe-kids-play-sports',
+          title: 'Volunteer coaches join the kids sports fund',
+          description: 'Local coaches are preparing inclusive weekly play sessions with equipment lending and transport help, making it easier for children across Karlsruhe to participate.',
+          imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800',
+          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        },
       },
     ];
-
-    return supporters.flatMap((supporter, index) => {
-      const update = sampleUpdates.find(item => item.id === supporter.updateId);
-      if (!update) return [];
-
-      return {
-        ...supporter,
-        update: {
-          ...update,
-          id: `global-${update.id}`,
-          date: new Date(Date.now() - (index + 1) * 18 * 60 * 60 * 1000).toISOString(),
-        },
-      };
-    });
   }, []);
+
+  useEffect(() => {
+    if (!pitchPost) return;
+
+    const handlePitchKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setPitchPost(null);
+        setPitchMode('post');
+        return;
+      }
+
+      if (event.code === 'Space' && pitchMode === 'post') {
+        event.preventDefault();
+        setPitchMode('video');
+      }
+    };
+
+    window.addEventListener('keydown', handlePitchKeyDown);
+
+    return () => window.removeEventListener('keydown', handlePitchKeyDown);
+  }, [pitchMode, pitchPost]);
+
+  useEffect(() => {
+    if (pitchMode === 'video') {
+      pitchVideoRef.current?.play().catch(() => {
+        // Browser policies can still block playback in edge cases.
+      });
+    }
+  }, [pitchMode]);
 
   // If there's no user, show a loading/fallback state
   if (!user) {
@@ -175,6 +221,7 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
     supporterName: string,
     avatarUrl?: string,
     supporterHub?: string,
+    onOpenPost?: () => void,
   ) => {
     const isLiked = likedUpdates.has(update.id);
     const totalLikes = getBaseLikes(update.id) + (isLiked ? 1 : 0);
@@ -183,7 +230,18 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
     return (
       <article
         key={update.id}
-        className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl overflow-hidden group"
+        onClick={onOpenPost}
+        role={onOpenPost ? 'button' : undefined}
+        tabIndex={onOpenPost ? 0 : undefined}
+        onKeyDown={(event) => {
+          if (!onOpenPost) return;
+          if (event.key === 'Enter') {
+            onOpenPost();
+          }
+        }}
+        className={`card bg-base-100 border border-base-300 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl overflow-hidden group ${
+          onOpenPost ? 'cursor-pointer' : ''
+        }`}
       >
         <div className="p-6 pb-4 flex justify-between items-start gap-4">
           <div className="flex items-center gap-3">
@@ -249,7 +307,10 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
         <div className="px-6 py-4 bg-base-200/40 border-t border-base-300 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => handleLike(update.id)}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleLike(update.id);
+              }}
               className={`flex items-center gap-1.5 text-sm font-semibold transition-all duration-200 ${
                 isLiked
                   ? 'text-red-500 scale-105'
@@ -568,6 +629,12 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
                     item.supporterName,
                     item.avatarUrl,
                     item.supporterHub,
+                    item.update.id === 'global-lbbw-initial-support'
+                      ? () => {
+                          setPitchPost(item);
+                          setPitchMode('post');
+                        }
+                      : undefined,
                   ))}
             </div>
           )}
@@ -575,6 +642,73 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
         </section>
 
       </main>
+      {pitchPost && (
+        <div className="fixed inset-0 z-[6000] bg-base-100 text-base-content animate-fade-in">
+          {pitchMode === 'post' ? (
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={pitchPost.avatarUrl}
+                    alt={pitchPost.supporterName}
+                    className="h-11 w-11 rounded-full border border-base-300 object-cover bg-base-100"
+                  />
+                  <div>
+                    <p className="font-extrabold">{pitchPost.supporterName}</p>
+                    <p className="text-sm font-semibold text-base-content/50">{pitchPost.supporterHub}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPitchPost(null);
+                    setPitchMode('post');
+                  }}
+                  className="btn btn-ghost btn-sm rounded-full px-4"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-2">
+                <div className="min-h-0 bg-base-200">
+                  {pitchPost.update.imageUrl && (
+                    <img
+                      src={pitchPost.update.imageUrl}
+                      alt={pitchPost.update.title}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+                <div className="flex min-h-0 flex-col justify-center p-8 md:p-14 lg:p-20">
+                  <span className="badge badge-primary mb-6 w-fit px-4 py-3 font-bold">Global Feed</span>
+                  <h1 className="text-4xl font-black leading-tight tracking-tight md:text-6xl">
+                    {pitchPost.update.title}
+                  </h1>
+                  <p className="mt-8 text-lg leading-relaxed text-base-content/75 md:text-2xl">
+                    {pitchPost.update.description}
+                  </p>
+                  <div className="mt-10 flex items-center gap-3 text-sm font-bold uppercase tracking-wide text-base-content/45">
+                    <span>Press Space</span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-base-content/30"></span>
+                    <span>Play impact animation</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="relative h-full w-full bg-black">
+              <video
+                ref={pitchVideoRef}
+                src="/ImpactAnimation.mp4"
+                className="h-full w-full object-cover"
+                autoPlay
+                playsInline
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
