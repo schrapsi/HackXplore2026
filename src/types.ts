@@ -23,8 +23,10 @@ export interface Project {
   primaryCategory: ImpactCategory;
   categoryLabel: string;
   category: string[];
-  budgetTier: string[];
+  initialCost: number;
+  runningCostsPerYear: number;
   imageUrl: string;
+  logoUrl: string;
   impactMetric: string;
   coordinates: {
     lat: number;

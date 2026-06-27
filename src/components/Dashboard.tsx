@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { User, Project, ProjectUpdate } from '../types';
 import { sampleProjects } from '../data/projects';
-import { sampleUpdates } from '../data/updates';
+import { sampleUpdates, getUpdatesForProject } from '../data/updates';
 
 interface DashboardProps {
   user: User | null;
@@ -38,10 +38,13 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
   // 3. Compile Feed Items: Updates from the user's supported projects
   const feedUpdates: ProjectUpdate[] = useMemo(() => {
     if (!user) return [];
-    const supportedIds = new Set(user.fundedProjects.map(p => p.projectId));
     
-    // Filter updates for projects the user supports
-    let updates = sampleUpdates.filter(u => supportedIds.has(u.projectId));
+    let updates: ProjectUpdate[] = [];
+    user.fundedProjects.forEach(funded => {
+      const project = sampleProjects.find(p => p.id === funded.projectId);
+      const projectTitle = project ? project.title : 'Project';
+      updates = [...updates, ...getUpdatesForProject(funded.projectId, projectTitle)];
+    });
 
     // Filter by selected project if applicable
     if (selectedProjectId) {
@@ -260,13 +263,15 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
                   }`}
                 >
                   <img 
-                    src={item.project.imageUrl} 
+                    src={item.project.logoUrl} 
                     alt={item.project.title} 
                     className="w-8 h-8 rounded-full object-cover shadow-sm border border-base-300"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{item.project.title}</p>
-                    <p className="text-xs opacity-60 truncate">{item.commitment.replace('-', ' - ')} committed</p>
+                    <p className="text-xs opacity-60 truncate">
+                      Initial: ${item.project.initialCost.toLocaleString()} • Running: ${item.project.runningCostsPerYear.toLocaleString()}/yr
+                    </p>
                   </div>
                 </button>
               ))}

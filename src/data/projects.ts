@@ -58,13 +58,7 @@ const globalLocations: LocationOption[] = [
   { name: 'Lisbon, Portugal', lat: 38.7223, lng: -9.1393, scope: 'global' },
 ];
 
-const budgetTierGroups: string[][] = [
-  ['20k-50k', '50k-100k'],
-  ['50k-100k', '100k-200k'],
-  ['100k-200k', '200k-500k'],
-  ['200k-500k', '500k+'],
-  ['500k+'],
-];
+
 
 const categoryDefinitions: CategoryDefinition[] = [
   {
@@ -785,16 +779,23 @@ const getProjectLocation = (categoryIndex: number, conceptIndex: number) => {
   return globalLocations[(categoryIndex * 5 + conceptIndex - 5) % globalLocations.length];
 };
 
+const getLogoForProject = (_title: string): string => {
+  // Placeholder logo URL for all projects for now
+  return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=120';
+};
+
 export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition, categoryIndex) =>
   definition.concepts.map((concept, conceptIndex) => {
     const location = getProjectLocation(categoryIndex, conceptIndex);
     const scopeKeywords = location.scope === 'baden-wuerttemberg'
       ? ['baden-wuerttemberg', 'baden-württemberg', 'local', 'regional']
       : ['global', 'international'];
+    
+    const projectTitle = `${concept.title} - ${location.name}`;
 
     return {
       id: `${definition.idPrefix}-${conceptIndex + 1}`,
-      title: `${concept.title} - ${location.name}`,
+      title: projectTitle,
       description: concept.description,
       location: location.name,
       primaryCategory: definition.category,
@@ -806,8 +807,10 @@ export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition
         ...scopeKeywords,
         location.name.toLowerCase(),
       ],
-      budgetTier: budgetTierGroups[(categoryIndex + conceptIndex) % budgetTierGroups.length],
-      imageUrl: definition.imageUrl,
+      initialCost: (categoryIndex + 1) * 35000 + conceptIndex * 12000,
+      runningCostsPerYear: (categoryIndex + 1) * 8000 + conceptIndex * 2500,
+      imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800',
+      logoUrl: getLogoForProject(projectTitle),
       impactMetric: concept.impactMetric,
       coordinates: {
         lat: location.lat,
@@ -817,12 +820,27 @@ export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition
   })
 );
 
+const matchBudgetTier = (cost: number, tier: string): boolean => {
+  switch (tier) {
+    case '20k-50k':
+      return cost >= 20000 && cost <= 50000;
+    case '50k-100k':
+      return cost >= 50000 && cost <= 100000;
+    case '100k-200k':
+      return cost >= 100000 && cost <= 200000;
+    case '200k+':
+      return cost >= 200000;
+    default:
+      return true;
+  }
+};
+
 // Scaffold function simulating AI processing of user input
 export const processUserInput = (prompt: string, budget: string): Project[] => {
   const lowercasePrompt = prompt.toLowerCase();
 
-  // 1. Filter by budget first
-  const budgetMatched = sampleProjects.filter(p => p.budgetTier.includes(budget));
+  // 1. Filter by budget first using initialCost
+  const budgetMatched = sampleProjects.filter(p => matchBudgetTier(p.initialCost, budget));
 
   // 2. Simulate AI matching by checking if prompt keywords match categories/description
   // In reality, this would be an API call to an LLM returning matching project IDs.

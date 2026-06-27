@@ -56,6 +56,13 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
                 <div className="absolute top-4 left-4">
                   <span className="badge badge-primary font-semibold shadow-sm">{project.location}</span>
                 </div>
+                <div className="absolute -bottom-5 right-5 z-10">
+                  <img 
+                    src={project.logoUrl} 
+                    alt="logo" 
+                    className="w-12 h-12 rounded-2xl object-cover border-4 border-base-100 shadow-md bg-base-100"
+                  />
+                </div>
               </figure>
 
               <div className="card-body p-6">
@@ -69,6 +76,17 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
                 <p className="text-base-content/80 text-sm mt-2 line-clamp-3">
                   {project.description}
                 </p>
+
+                <div className="flex justify-between items-center bg-base-200/50 rounded-xl p-3 my-3 text-sm border border-base-300/30">
+                  <div>
+                    <span className="text-xs uppercase font-bold text-base-content/40 block">Initial Cost</span>
+                    <span className="font-extrabold text-base-content">${project.initialCost.toLocaleString()}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs uppercase font-bold text-base-content/40 block">Running Cost/Yr</span>
+                    <span className="font-extrabold text-base-content">${project.runningCostsPerYear.toLocaleString()}</span>
+                  </div>
+                </div>
                 
                 <div className="divider my-2"></div>
                 

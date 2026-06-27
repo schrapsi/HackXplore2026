@@ -105,3 +105,32 @@ export const sampleUpdates: ProjectUpdate[] = [
     date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
   }
 ];
+
+export function getUpdatesForProject(projectId: string, projectTitle: string): ProjectUpdate[] {
+  // If the project ID matches directly, return those updates
+  const directUpdates = sampleUpdates.filter(u => u.projectId === projectId);
+  if (directUpdates.length > 0) return directUpdates;
+
+  // Determine a themed template based on the project's ID prefix
+  let baseTemplateId = 'p1'; // Default: Clean Water / Infrastructure (Water/Kitchen/Shelter)
+  
+  if (projectId.startsWith('climate-environment') || projectId.startsWith('animal-welfare')) {
+    baseTemplateId = 'p2'; // Theme: Nature & Planting
+  } else if (projectId.startsWith('education') || projectId.startsWith('open-source-tech') || projectId.startsWith('research-innovation')) {
+    baseTemplateId = 'p3'; // Theme: Laptops, Tech & Education
+  } else if (projectId.startsWith('disaster-relief') || projectId.startsWith('health-medical')) {
+    baseTemplateId = 'p4'; // Theme: Advanced systems & equipment deploy
+  }
+
+  const baseUpdates = sampleUpdates.filter(u => u.projectId === baseTemplateId);
+
+  // Map the base template updates to the specific project
+  return baseUpdates.map(u => ({
+    ...u,
+    id: `${u.id}-${projectId}`,
+    projectId: projectId,
+    title: u.title.replace('Village A', projectTitle.split(' - ')[0]),
+    description: u.description.replace('Berlin-Neukölln', projectTitle.split(' - ')[0]),
+  }));
+}
+
