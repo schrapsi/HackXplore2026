@@ -12,6 +12,7 @@ import type { Project, User } from './types';
 function App() {
   const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'login' | 'dashboard' | 'hub'>('landing');
   const [matchedProjects, setMatchedProjects] = useState<Project[]>([]);
+  const [promptHistory, setPromptHistory] = useState<string[]>([]);
   
   // Track selections across steps
   const [selectedBudget, setSelectedBudget] = useState('');
@@ -30,11 +31,19 @@ function App() {
     checkSession();
   }, []);
 
-  const handleSearch = (prompt: string, budget: string) => {
+  const handleSearch = async (prompt: string, budget: string) => {
     setSelectedBudget(budget);
-    const results = processUserInput(prompt, budget);
+    setPromptHistory([prompt]);
+    const results = await processUserInput([prompt], budget);
     setMatchedProjects(results);
     setStep('discovery');
+  };
+
+  const handleRefineSearch = async (refinement: string) => {
+    const newHistory = [...promptHistory, refinement];
+    setPromptHistory(newHistory);
+    const results = await processUserInput(newHistory, selectedBudget);
+    setMatchedProjects(results);
   };
 
   const handleGoBack = () => {
@@ -76,6 +85,7 @@ function App() {
           projects={matchedProjects} 
           onBack={handleGoBack} 
           onFundProject={handleFundProject}
+          onRefineSearch={handleRefineSearch}
         />
       )}
 

@@ -1,4 +1,5 @@
 import { ImpactCategory, type Project } from '../types';
+import { GoogleGenAI, Type } from '@google/genai';
 
 interface LocationOption {
   name: string;
@@ -932,14 +933,62 @@ const matchBudgetTier = (cost: number, tier: string): boolean => {
 };
 
 // Scaffold function simulating AI processing of user input
-export const processUserInput = (prompt: string, budget: string): Project[] => {
-  const lowercasePrompt = prompt.toLowerCase();
+export const processUserInput = async (prompts: string[], budget: string): Promise<Project[]> => {
+  const lowercasePrompt = prompts[prompts.length - 1].toLowerCase();
 
   // 1. Filter by budget first using initialCost
   const budgetMatched = sampleProjects.filter(p => matchBudgetTier(p.initialCost, budget));
 
-  // 2. Simulate AI matching by checking if prompt keywords match categories/description
-  // In reality, this would be an API call to an LLM returning matching project IDs.
+  try {
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+
+    const projectList = budgetMatched.map(p => ({
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      categories: p.category.join(', ')
+    }));
+
+    const promptHistoryText = prompts.map((p, i) => `Prompt ${i + 1}: "${p}"`).join('\n');
+    const systemPrompt = `You are a matching assistant. The user wants to fund a project and has provided the following prompt history:
+${promptHistoryText}
+
+Here are the available projects that match their budget:
+${JSON.stringify(projectList, null, 2)}
+
+Return the IDs of the top 3 most fitting projects in order of relevance, taking into account the user's iterative refinement in their prompt history.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: systemPrompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING
+          }
+        }
+      }
+    });
+
+    if (response.text) {
+      const topProjectIds: string[] = JSON.parse(response.text);
+      
+      const topProjects = topProjectIds
+        .map(id => budgetMatched.find(p => p.id === id))
+        .filter((p): p is Project => p !== undefined)
+        .slice(0, 3);
+        
+      if (topProjects.length > 0) {
+        return topProjects;
+      }
+    }
+  } catch (error) {
+    console.error("Error matching projects with AI:", error);
+  }
+
+  // Fallback to basic scoring if AI fails
   const scoredProjects = budgetMatched.map(project => {
     let score = 0;
     project.category.forEach(cat => {
@@ -960,10 +1009,10 @@ export const processUserInput = (prompt: string, budget: string): Project[] => {
 
   // If no keyword matched but we have budget matches, just return the budget matches
   if (sorted.length > 0 && sorted[0].score > 0) {
-     return sorted.map(({ score: _, ...project }) => project);
+     return sorted.map(({ score: _, ...project }) => project).slice(0, 3);
   }
 
-  return budgetMatched;
+  return budgetMatched.slice(0, 3);
 };
 
 export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
