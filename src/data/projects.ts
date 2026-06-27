@@ -784,6 +784,101 @@ const getLogoForProject = (_title: string): string => {
   return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=120';
 };
 
+const generateMockMetricData = (category: string, projectIndex: number) => {
+  let name = 'People helped';
+  let unit = 'people';
+  let baseValue = 50 + projectIndex * 15;
+  let growthRate = 10 + (projectIndex % 3) * 5;
+
+  switch (category) {
+    case ImpactCategory.LocalCommunitySupport:
+      name = 'Warm meals served';
+      unit = 'meals';
+      baseValue = 500 + projectIndex * 100;
+      growthRate = 120 + projectIndex * 20;
+      break;
+    case ImpactCategory.Education:
+      name = 'Students trained';
+      unit = 'students';
+      baseValue = 30 + projectIndex * 10;
+      growthRate = 8 + projectIndex * 2;
+      break;
+    case ImpactCategory.HealthAndMedicalCare:
+      name = 'Patients treated';
+      unit = 'patients';
+      baseValue = 150 + projectIndex * 30;
+      growthRate = 40 + projectIndex * 5;
+      break;
+    case ImpactCategory.PovertyAndBasicNeeds:
+      name = 'Families supported';
+      unit = 'families';
+      baseValue = 40 + projectIndex * 8;
+      growthRate = 12 + projectIndex * 3;
+      break;
+    case ImpactCategory.ChildrenAndFamilies:
+      name = 'Children mentored';
+      unit = 'children';
+      baseValue = 25 + projectIndex * 5;
+      growthRate = 6 + projectIndex * 2;
+      break;
+    case ImpactCategory.ClimateAndEnvironment:
+      name = 'CO2 offset';
+      unit = 'tons';
+      baseValue = 80 + projectIndex * 25;
+      growthRate = 15 + projectIndex * 4;
+      break;
+    case ImpactCategory.AnimalWelfare:
+      name = 'Animals helped';
+      unit = 'animals';
+      baseValue = 60 + projectIndex * 12;
+      growthRate = 18 + projectIndex * 3;
+      break;
+    case ImpactCategory.DisasterRelief:
+      name = 'Emergency kits distributed';
+      unit = 'kits';
+      baseValue = 200 + projectIndex * 50;
+      growthRate = 75 + projectIndex * 15;
+      break;
+    case ImpactCategory.ArtsCultureAndPublicSpaces:
+      name = 'Exhibitions hosted';
+      unit = 'exhibitions';
+      baseValue = 2 + (projectIndex % 3);
+      growthRate = 1;
+      break;
+    case ImpactCategory.OpenSourcePublicGoodTechnology:
+      name = 'Active installations';
+      unit = 'users';
+      baseValue = 1000 + projectIndex * 500;
+      growthRate = 400 + projectIndex * 100;
+      break;
+    case ImpactCategory.SportsAndYouthDevelopment:
+      name = 'Youth athletes funded';
+      unit = 'youths';
+      baseValue = 45 + projectIndex * 15;
+      growthRate = 10 + projectIndex * 2;
+      break;
+    case ImpactCategory.ResearchAndInnovation:
+      name = 'Research papers published';
+      unit = 'papers';
+      baseValue = 1 + (projectIndex % 2);
+      growthRate = 1;
+      break;
+  }
+
+  // Generate 6 data points (monthly progress)
+  const dataPoints = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    dataPoints.push({
+      date: d.toISOString().split('T')[0], // YYYY-MM-DD
+      value: baseValue + (5 - i) * growthRate
+    });
+  }
+
+  return { name, unit, dataPoints };
+};
+
 export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition, categoryIndex) =>
   definition.concepts.map((concept, conceptIndex) => {
     const location = getProjectLocation(categoryIndex, conceptIndex);
@@ -812,6 +907,7 @@ export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition
       imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800',
       logoUrl: getLogoForProject(projectTitle),
       impactMetric: concept.impactMetric,
+      metric: generateMockMetricData(definition.category, conceptIndex),
       coordinates: {
         lat: location.lat,
         lng: location.lng,
