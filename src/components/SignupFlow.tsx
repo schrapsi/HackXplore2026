@@ -15,7 +15,7 @@ interface SignupFlowProps {
 export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: SignupFlowProps) {
   const [name, setName] = useState('Emma Fischer');
   const [email, setEmail] = useState('emma.fischer@example.com');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('pw');
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
