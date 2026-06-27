@@ -40,56 +40,56 @@ export function LoginFlow({ onBack, onComplete }: LoginFlowProps) {
       />
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md bg-base-100 rounded-3xl shadow-2xl overflow-hidden border border-base-300">
-        
-        {/* Header Section */}
-        <div className="bg-primary p-8 text-primary-content text-center">
-          <h2 className="text-2xl font-bold">Welcome Back</h2>
-          <p className="mt-2 opacity-80 text-sm">Log in to view your impact and manage your funded projects.</p>
-        </div>
+          
+          {/* Header Section */}
+          <div className="bg-primary p-8 text-primary-content text-center">
+            <h2 className="text-2xl font-bold">Welcome Back</h2>
+            <p className="mt-2 opacity-80 text-sm">Log in to view your impact and manage your funded projects.</p>
+          </div>
 
-        <div className="p-8">
-          <form onSubmit={handleLogin} className="flex flex-col gap-5 animate-fade-in">
-            
-            <div className="form-control">
-              <label className="label"><span className="label-text font-medium">Name or Email</span></label>
-              <input 
-                type="text" 
-                required
-                placeholder="John Doe" 
-                className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
-                value={name}
-                onChange={e => setName(e.target.value)}
-              />
-            </div>
-
-            <div className="form-control">
-              <label className="label"><span className="label-text font-medium">Password</span></label>
-              <input 
-                type="password" 
-                required
-                placeholder="••••••••" 
-                className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={isProcessing || !name || !password}
-              className="btn btn-primary w-full rounded-full text-lg mt-4"
-            >
-              {isProcessing ? <span className="loading loading-spinner"></span> : 'Log In'}
-            </button>
-            
-            {errorMsg && (
-              <div className="text-error text-sm text-center mt-2 animate-fade-in">
-                {errorMsg}
+          <div className="p-8">
+            <form onSubmit={handleLogin} className="flex flex-col gap-5 animate-fade-in">
+              
+              <div className="form-control">
+                <label className="label"><span className="label-text font-medium">Name or Email</span></label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="John Doe" 
+                  className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
               </div>
-            )}
-          </form>
+
+              <div className="form-control">
+                <label className="label"><span className="label-text font-medium">Password</span></label>
+                <input 
+                  type="password" 
+                  required
+                  placeholder="••••••••" 
+                  className="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary w-full bg-base-100" 
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isProcessing || !name || !password}
+                className="btn btn-primary w-full rounded-full text-lg mt-4"
+              >
+                {isProcessing ? <span className="loading loading-spinner"></span> : 'Log In'}
+              </button>
+              
+              {errorMsg && (
+                <div className="text-error text-sm text-center mt-2 animate-fade-in">
+                  {errorMsg}
+                </div>
+              )}
+            </form>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

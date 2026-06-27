@@ -54,6 +54,12 @@ function App() {
     setStep('dashboard');
   };
 
+  const handleLoginComplete = async () => {
+    const user = await mockBackend.getCurrentUser();
+    setCurrentUser(user);
+    setStep('dashboard');
+  };
+
   const handleLogout = async () => {
     await mockBackend.logout();
     setCurrentUser(null);

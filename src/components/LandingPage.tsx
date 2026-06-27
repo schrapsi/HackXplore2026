@@ -33,7 +33,6 @@ const searchSteps = [
 
 const searchStepDurationsMs = [700, 1300, 900]
 const searchCalculationDelayMs = searchStepDurationsMs.reduce((total, duration) => total + duration, 0)
-
 export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const [prompt, setPrompt] = useState('')
   const [budget, setBudget] = useState('')
