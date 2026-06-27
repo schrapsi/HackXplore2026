@@ -880,7 +880,7 @@ const generateMockMetricData = (category: string, projectIndex: number) => {
   return { name, unit, dataPoints };
 };
 
-export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition, categoryIndex) =>
+const generatedProjects: Project[] = categoryDefinitions.flatMap((definition, categoryIndex) =>
   definition.concepts.map((concept, conceptIndex) => {
     const location = getProjectLocation(categoryIndex, conceptIndex);
     const scopeKeywords = location.scope === 'baden-wuerttemberg'
@@ -917,6 +917,103 @@ export const sampleProjects: Project[] = categoryDefinitions.flatMap((definition
   })
 );
 
+const karlsruheChildrenProjects: Project[] = [
+  {
+    id: 'karlsruhe-kids-kindergarten',
+    title: 'Karlsruhe Kindergarten Garden Rooms',
+    description: 'Create a greener kindergarten courtyard with shaded outdoor learning rooms, safer play equipment, sensory planting, and parent volunteer days for young children in Karlsruhe.',
+    location: 'Karlsruhe',
+    primaryCategory: ImpactCategory.ChildrenAndFamilies,
+    categoryLabel: 'Children and families',
+    category: [
+      ImpactCategory.ChildrenAndFamilies,
+      'children and families',
+      'children',
+      'kids',
+      'kinder',
+      'kindergarten',
+      'kita',
+      'karlsruhe',
+      'local',
+    ],
+    initialCost: 92000,
+    runningCostsPerYear: 2800,
+    imageUrl: 'https://images.unsplash.com/photo-1544776193-352d25ca82cd?auto=format&fit=crop&q=80&w=800',
+    logoUrl: getLogoForProject('Karlsruhe Kindergarten Garden Rooms'),
+    impactMetric: 'Gives 140 kindergarten children safer daily play and learning space',
+    metric: generateMockMetricData(ImpactCategory.ChildrenAndFamilies, 0),
+    coordinates: {
+      lat: 49.0017,
+      lng: 8.4044,
+    },
+  },
+  {
+    id: 'karlsruhe-kids-maker-club',
+    title: 'Karlsruhe After-School Maker Club',
+    description: 'Fund an after-school club with supervised homework time, robotics kits, creative workshops, and mentoring for children in Karlsruhe-Durlach.',
+    location: 'Karlsruhe',
+    primaryCategory: ImpactCategory.Education,
+    categoryLabel: 'Education',
+    category: [
+      ImpactCategory.Education,
+      'education',
+      'children',
+      'kids',
+      'kinder',
+      'youth',
+      'jugend',
+      'after school',
+      'karlsruhe',
+      'local',
+    ],
+    initialCost: 110000,
+    runningCostsPerYear: 2400,
+    imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800',
+    logoUrl: getLogoForProject('Karlsruhe After-School Maker Club'),
+    impactMetric: 'Runs weekly learning clubs for 220 Karlsruhe children',
+    metric: generateMockMetricData(ImpactCategory.Education, 3),
+    coordinates: {
+      lat: 49.0004,
+      lng: 8.4716,
+    },
+  },
+  {
+    id: 'karlsruhe-kids-play-sports',
+    title: 'Karlsruhe Kids Play and Sports Fund',
+    description: 'Equip neighborhood sports, inclusive play sessions, coaching hours, and transport vouchers so more children in Karlsruhe can join regular movement programs.',
+    location: 'Karlsruhe',
+    primaryCategory: ImpactCategory.SportsAndYouthDevelopment,
+    categoryLabel: 'Sports and youth development',
+    category: [
+      ImpactCategory.SportsAndYouthDevelopment,
+      'sports and youth development',
+      'children',
+      'kids',
+      'kinder',
+      'play',
+      'sports',
+      'movement',
+      'karlsruhe',
+      'local',
+    ],
+    initialCost: 78000,
+    runningCostsPerYear: 3200,
+    imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800',
+    logoUrl: getLogoForProject('Karlsruhe Kids Play and Sports Fund'),
+    impactMetric: 'Enables 360 children to join weekly play and sports sessions',
+    metric: generateMockMetricData(ImpactCategory.SportsAndYouthDevelopment, 2),
+    coordinates: {
+      lat: 49.0172,
+      lng: 8.3659,
+    },
+  },
+];
+
+export const sampleProjects: Project[] = [
+  ...karlsruheChildrenProjects,
+  ...generatedProjects,
+];
+
 const matchBudgetTier = (cost: number, tier: string): boolean => {
   switch (tier) {
     case '20k-50k':
@@ -939,12 +1036,31 @@ export const calculateTotalCommitment = (initialCost: number, runningCostsPerYea
 // Scaffold function simulating AI processing of user input
 export const processUserInput = async (prompts: string[], budget: string): Promise<Project[]> => {
   const lowercasePrompt = prompts[prompts.length - 1].toLowerCase();
+  const normalizedPrompt = lowercasePrompt
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ß/g, 'ss');
 
   // 1. Filter by budget first: matches if initialCost fits OR total commitment fits
   const budgetMatched = sampleProjects.filter(p => {
     const total = calculateTotalCommitment(p.initialCost, p.runningCostsPerYear);
     return matchBudgetTier(p.initialCost, budget) || matchBudgetTier(total, budget);
   });
+
+  const asksForKarlsruheKids =
+    normalizedPrompt.includes('karlsruhe') &&
+    ['kids', 'kinder', 'kind', 'child', 'children', 'youth', 'jugend'].some(keyword => normalizedPrompt.includes(keyword));
+
+  if (asksForKarlsruheKids) {
+    const karlsruheKidsMatches = budgetMatched.filter(project =>
+      project.location.toLowerCase() === 'karlsruhe' &&
+      project.category.some(category => ['kids', 'kinder', 'kindergarten', 'kita', 'children', 'youth', 'jugend'].includes(category))
+    );
+
+    if (karlsruheKidsMatches.length >= 3) {
+      return karlsruheKidsMatches.slice(0, 3);
+    }
+  }
 
   try {
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
