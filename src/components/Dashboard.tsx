@@ -12,7 +12,6 @@ interface DashboardProps {
 export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [likedUpdates, setLikedUpdates] = useState<Set<string>>(new Set());
-  const [copiedUpdateId, setCopiedUpdateId] = useState<string | null>(null);
 
   // 1. Get projects supported by the user
   const supportedProjects = useMemo(() => {
@@ -76,14 +75,7 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
     });
   };
 
-  // Handle Mock Share (Copy Link)
-  const handleShare = (updateId: string) => {
-    const fakeUrl = `${window.location.origin}/updates/${updateId}`;
-    navigator.clipboard.writeText(fakeUrl).then(() => {
-      setCopiedUpdateId(updateId);
-      setTimeout(() => setCopiedUpdateId(null), 2000);
-    });
-  };
+
 
   // Format dates nicely
   const formatDate = (isoString: string) => {
@@ -109,6 +101,15 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
       hash = id.charCodeAt(i) + ((hash << 5) - hash);
     }
     return Math.abs(hash % 45) + 12; // 12-56 likes base
+  };
+
+  // Generate a deterministic base number of comments for mockup richness (independent of likes)
+  const getBaseComments = (id: string) => {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash % 8) + 2; // 2-9 comments base
   };
 
   return (
@@ -304,7 +305,6 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
                 const project = sampleProjects.find(p => p.id === update.projectId);
                 const isLiked = likedUpdates.has(update.id);
                 const totalLikes = getBaseLikes(update.id) + (isLiked ? 1 : 0);
-                const isCopied = copiedUpdateId === update.id;
 
                 return (
                   <article 
@@ -411,24 +411,9 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.921 1.78 4.42 4.42 0 002.386-.718 2.376 2.376 0 011.516-.295c.783.088 1.58.132 2.383.132z" />
                           </svg>
-                          <span>{Math.abs(totalLikes % 8) + 2}</span>
+                          <span>{getBaseComments(update.id)}</span>
                         </div>
                       </div>
-
-                      {/* Share Button (Local Clip Board Action) */}
-                      <button 
-                        onClick={() => handleShare(update.id)}
-                        className="btn btn-ghost btn-sm btn-circle text-base-content/60 hover:text-primary hover:bg-base-200"
-                        title="Copy Share Link"
-                      >
-                        {isCopied ? (
-                          <span className="text-xs text-success font-bold">Copied!</span>
-                        ) : (
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186l5.566-2.783m-5.566 3.14l5.566 2.783m0 0a2.25 2.25 0 103.933-2.186 2.25 2.25 0 00-3.933 2.186zM12.8 9.813a2.25 2.25 0 103.933-2.186 2.25 2.25 0 00-3.933 2.186z" />
-                          </svg>
-                        )}
-                      </button>
                     </div>
                   </article>
                 );
