@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Project } from '../types';
+import type { Project, User } from '../types';
 import { mockBackend } from '../data/auth';
 import { calculateTotalCommitment } from '../data/projects';
 
@@ -7,7 +7,7 @@ interface SignupFlowProps {
   project: Project;
   budgetTier: string;
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (user: User) => void;
 }
 
 import { TopNavigationBar } from './TopNavigationBar';
@@ -16,7 +16,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
   const [name, setName] = useState('Emma Fischer');
   const [email, setEmail] = useState('emma.fischer@example.com');
   const [password, setPassword] = useState('pw');
-  const [hubBrandName, setHubBrandName] = useState('');
+  const [hubBrandName, setHubBrandName] = useState('Emmis Good Will');
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
@@ -39,10 +39,10 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
   const handleCommitFunds = async () => {
     setIsProcessing(true);
     try {
-      await mockBackend.commitToProject(project.id, totalCommitment.toString());
+      const user = await mockBackend.commitToProject(project.id, totalCommitment.toString());
       setStep('success');
       setTimeout(() => {
-        onComplete();
+        onComplete(user);
       }, 2000);
     } catch (err) {
       console.error(err);

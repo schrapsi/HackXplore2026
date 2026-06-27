@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import type { User } from '../types';
 import { mockBackend } from '../data/auth';
 import { TopNavigationBar } from './TopNavigationBar';
 
 interface LoginFlowProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (user: User) => void;
 }
 
 export function LoginFlow({ onBack, onComplete }: LoginFlowProps) {
@@ -18,8 +19,8 @@ export function LoginFlow({ onBack, onComplete }: LoginFlowProps) {
     setIsProcessing(true);
     setErrorMsg('');
     try {
-      await mockBackend.login(name, password);
-      onComplete();
+      const user = await mockBackend.login(name, password);
+      onComplete(user);
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to login');
     } finally {
