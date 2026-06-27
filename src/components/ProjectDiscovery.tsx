@@ -21,7 +21,7 @@ function MessageProjectsView({ projects, onFundProject }: { projects: Project[],
   const [activeView, setActiveView] = useState<'grid' | 'map'>('grid');
 
   return (
-    <div className="mt-6 chat-footer w-full max-w-3xl">
+    <div className="mt-6 opacity-100 w-full max-w-3xl" style={{ gridColumn: '2' }}>
       <div className="flex justify-end mb-4">
         <div className="join bg-base-100 p-1 rounded-full shadow-sm border border-base-300">
           <button 
@@ -43,38 +43,77 @@ function MessageProjectsView({ projects, onFundProject }: { projects: Project[],
         <div className="flex flex-col gap-6">
           {projects.map(project => {
             const total = calculateTotalCommitment(project.initialCost, project.runningCostsPerYear);
+            const endowment = project.runningCostsPerYear / 0.04;
             return (
-              <div key={project.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border border-base-300 flex flex-col md:flex-row overflow-hidden">
-                <figure className="relative md:w-1/3 h-48 md:h-auto overflow-hidden">
+              <div key={project.id} className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 overflow-hidden group">
+                <figure className="relative h-56 overflow-hidden">
                   <img 
                     src={project.imageUrl} 
                     alt={project.title} 
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-2 left-2">
-                    <span className="badge badge-primary badge-sm font-semibold shadow-sm">{project.location}</span>
+                  <div className="absolute top-4 left-4">
+                    <span className="badge badge-primary font-semibold shadow-sm">{project.location}</span>
+                  </div>
+                  <div className="absolute -bottom-5 right-5 z-10">
+                    <img 
+                      src={project.logoUrl} 
+                      alt="logo" 
+                      className="w-12 h-12 rounded-2xl object-cover border-4 border-base-100 shadow-md bg-base-100"
+                    />
                   </div>
                 </figure>
 
-                <div className="card-body p-5 md:w-2/3">
-                  <h3 className="card-title text-lg text-primary">{project.title}</h3>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    <span className="badge badge-outline badge-sm">{project.categoryLabel}</span>
+                <div className="card-body p-6">
+                  <h3 className="card-title text-xl text-primary">{project.title}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="badge badge-outline">{project.categoryLabel}</span>
                   </div>
-                  <p className="text-base-content/80 text-sm line-clamp-2">
+                  <p className="text-base-content/80 text-sm mt-2 line-clamp-3">
                     {project.description}
                   </p>
 
-                  <div className="mt-3 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-base-content/50 block">Commitment</span>
-                      <span className="text-lg font-bold text-base-content">€{total.toLocaleString()}</span>
+                  <div className="bg-base-200/40 rounded-2xl p-4 my-3 border border-base-300/40 flex flex-col gap-3">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] uppercase font-extrabold text-primary tracking-wider block">Required Commitment</span>
+                        <span className="text-2xl font-black text-base-content">€{total.toLocaleString()}</span>
+                      </div>
+                      <span className="badge badge-success badge-sm font-semibold text-[10px] py-1 px-2.5">Lifetime Upkeep</span>
                     </div>
+                    
+                    <div className="border-t border-base-300/60 my-0.5"></div>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-[11px] text-base-content/70">
+                      <div>
+                        <span className="font-semibold block text-base-content/50">Initial Launch Cost</span>
+                        <span className="text-xs font-bold text-base-content">€{project.initialCost.toLocaleString()}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-semibold block text-base-content/50">Yearly Running Cost</span>
+                        <span className="text-xs font-bold text-base-content">
+                          €{project.runningCostsPerYear.toLocaleString()}/yr
+                        </span>
+                        <span className="block text-[9px] text-base-content/40 leading-none mt-0.5 text-success font-medium">
+                          (upkeep covered by a €{endowment.toLocaleString()} maintenance fund)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="divider my-2"></div>
+                  
+                  <div className="flex flex-col gap-1 mb-4">
+                    <span className="text-xs uppercase font-bold text-accent tracking-wider">Estimated impact</span>
+                    <span className="text-base-content font-medium">{project.impactMetric}</span>
+                  </div>
+
+                  <div className="card-actions justify-end mt-auto pt-4">
                     <button 
                       onClick={() => onFundProject(project)}
-                      className="btn btn-primary btn-sm rounded-full px-6"
+                      className="btn btn-primary w-full rounded-full shadow-md text-lg h-12"
                     >
-                      Fund this
+                      Fund this project
                     </button>
                   </div>
                 </div>
