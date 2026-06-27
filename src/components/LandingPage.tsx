@@ -25,7 +25,7 @@ export function LandingPage({ onSearch }: LandingPageProps) {
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
       {/* Brand Header */}
       <div className="absolute top-8 left-8">
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT</h1>
+        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
       </div>
 
       {/* Main Search Area */}
