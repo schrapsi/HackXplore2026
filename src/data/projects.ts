@@ -1062,7 +1062,6 @@ export const processUserInput = async (prompts: string[], budget: string): Promi
       return karlsruheKidsMatches;
     }
   }
-
   try {
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
@@ -1137,4 +1136,5 @@ Return the IDs of the top 3 most fitting projects in order of relevance, taking 
   }
 
   return budgetMatched.slice(0, 3);
+
 };
