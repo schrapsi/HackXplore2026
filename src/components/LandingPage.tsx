@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 interface LandingPageProps {
   onSearch: (prompt: string, budget: string) => void;
+  onNavigateLogin: () => void;
 }
 
 const promptSuggestions = [
@@ -24,7 +25,7 @@ const promptSuggestions = [
 const typingSpeedMs = 12
 const suggestionPauseMs = 1800
 
-export function LandingPage({ onSearch }: LandingPageProps) {
+export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   const [prompt, setPrompt] = useState('')
   const [budget, setBudget] = useState('')
   const [suggestionIndex, setSuggestionIndex] = useState(0)
@@ -76,6 +77,14 @@ export function LandingPage({ onSearch }: LandingPageProps) {
       {/* Brand Header */}
       <div className="absolute top-8 left-8">
         <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
+      </div>
+      <div className="absolute top-8 right-8">
+        <button 
+          onClick={onNavigateLogin} 
+          className="btn btn-outline btn-sm rounded-full px-6 border-base-content/20"
+        >
+          Log in
+        </button>
       </div>
 
       {/* Main Search Area */}
