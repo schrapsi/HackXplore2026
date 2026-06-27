@@ -23,7 +23,7 @@ export const mockBackend = {
   // Simulate a payment/commitment flow
   async commitToProject(projectId: string, amount: string): Promise<User> {
     await delay(1200); // simulate payment processing
-    if (!currentUser) throw new Error("No user logged in");
+    if (!currentUser) throw new Error("Kein Benutzer angemeldet");
     
     currentUser.fundedProjects.push({
       projectId,
