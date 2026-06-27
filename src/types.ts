@@ -38,6 +38,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  hubBrandName: string;
   avatarUrl?: string;
   fundedProjects: {
     projectId: string;

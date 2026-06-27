@@ -7,9 +7,10 @@ interface DashboardProps {
   user: User | null;
   onLogout: () => void;
   onFundAnother: () => void;
+  onNavigateHub: () => void;
 }
 
-export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
+export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: DashboardProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [likedUpdates, setLikedUpdates] = useState<Set<string>>(new Set());
 
@@ -124,8 +125,14 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
           <span className="badge badge-sm badge-outline badge-neutral">DASHBOARD</span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={onNavigateHub}
+              className="btn btn-outline btn-sm rounded-full px-4 font-semibold text-primary border-primary/20 hover:bg-primary hover:text-primary-content hover:border-primary transition-colors"
+            >
+              Impact Hub
+            </button>
+            <div className="flex items-center gap-2">
             <div className="avatar placeholder">
               <div className="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-inner">
                 {user.name.charAt(0).toUpperCase()}

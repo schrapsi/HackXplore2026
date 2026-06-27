@@ -4,12 +4,13 @@ import { ProjectDiscovery } from './components/ProjectDiscovery';
 import { SignupFlow } from './components/SignupFlow';
 import { LoginFlow } from './components/LoginFlow';
 import { Dashboard } from './components/Dashboard';
+import { ImpactHub } from './components/ImpactHub';
 import { processUserInput } from './data/projects';
 import { mockBackend } from './data/auth';
 import type { Project, User } from './types';
 
 function App() {
-  const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'login' | 'dashboard'>('landing');
+  const [step, setStep] = useState<'landing' | 'discovery' | 'signup' | 'login' | 'dashboard' | 'hub'>('landing');
   const [matchedProjects, setMatchedProjects] = useState<Project[]>([]);
   
   // Track selections across steps
@@ -99,7 +100,12 @@ function App() {
           user={currentUser} 
           onLogout={handleLogout} 
           onFundAnother={handleGoBack} 
+          onNavigateHub={() => setStep('hub')}
         />
+      )}
+
+      {step === 'hub' && (
+        <ImpactHub onBack={() => setStep('dashboard')} />
       )}
     </>
   );
