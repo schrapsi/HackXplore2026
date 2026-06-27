@@ -10,6 +10,7 @@ interface ProjectMapProps {
 
 export function ProjectMap({ projects, onFundProject }: ProjectMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const userMarkerRef = useRef<L.Marker | null>(null);
@@ -205,16 +206,44 @@ export function ProjectMap({ projects, onFundProject }: ProjectMapProps) {
     }
   }, [isFullscreen]);
 
-  // Handle Escape key to exit fullscreen
+  // Listen for native fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  // Handle Escape key to exit fullscreen (fallback for non-native fullscreen)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isFullscreen) {
+      if (e.key === 'Escape' && isFullscreen && !document.fullscreenElement) {
         setIsFullscreen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      if (mapWrapperRef.current?.requestFullscreen) {
+        mapWrapperRef.current.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+          setIsFullscreen(true);
+        });
+      } else {
+        setIsFullscreen(true);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => setIsFullscreen(false));
+      } else {
+        setIsFullscreen(false);
+      }
+    }
+  };
 
   // Geolocation trigger
   const handleLocateMe = () => {
@@ -237,7 +266,7 @@ export function ProjectMap({ projects, onFundProject }: ProjectMapProps) {
   };
 
   return (
-    <div className={`relative w-full bg-base-100 ${isFullscreen ? 'fixed inset-0 z-[5000] rounded-none p-4 md:p-6 bg-base-200' : 'flex-grow min-h-0 rounded-3xl border border-base-300 shadow-lg'}`}>
+    <div ref={mapWrapperRef} className={`relative w-full bg-base-100 ${isFullscreen ? 'fixed inset-0 z-[5000] rounded-none p-4 md:p-6 bg-base-200' : 'flex-grow min-h-0 rounded-3xl border border-base-300 shadow-lg'}`}>
       
       {/* Map Element */}
       <div ref={mapContainerRef} className="w-full h-full z-0 rounded-2xl overflow-hidden" />
@@ -258,7 +287,7 @@ export function ProjectMap({ projects, onFundProject }: ProjectMapProps) {
 
         {/* Fullscreen Toggle */}
         <button 
-          onClick={() => setIsFullscreen(!isFullscreen)}
+          onClick={toggleFullscreen}
           className="btn btn-circle btn-primary bg-base-100 border border-base-300 text-base-content hover:bg-base-200 shadow-md"
           title={isFullscreen ? "Exit Fullscreen" : "Make Fullscreen"}
         >

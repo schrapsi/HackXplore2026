@@ -8,10 +8,25 @@ interface ProjectDiscoveryProps {
   projects: Project[];
   onBack: () => void;
   onFundProject: (project: Project) => void;
+  onRefineSearch?: (refinement: string) => Promise<void>;
 }
 
-export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDiscoveryProps) {
+export function ProjectDiscovery({ projects, onBack, onFundProject, onRefineSearch }: ProjectDiscoveryProps) {
   const [activeView, setActiveView] = useState<'grid' | 'map'>('grid');
+  const [refinement, setRefinement] = useState('');
+  const [isRefining, setIsRefining] = useState(false);
+
+  const handleRefine = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!refinement.trim() || !onRefineSearch) return;
+    setIsRefining(true);
+    try {
+      await onRefineSearch(refinement);
+      setRefinement('');
+    } finally {
+      setIsRefining(false);
+    }
+  };
 
   if (projects.length === 0) {
     return (
@@ -175,6 +190,36 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
         )}
       </div>
       
+      {/* Refine Search Input */}
+      {onRefineSearch && projects.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 z-50">
+          <form 
+            onSubmit={handleRefine}
+            className="flex items-center gap-2 bg-base-100/90 backdrop-blur-md p-2 rounded-full shadow-2xl border border-base-content/10"
+          >
+            <input 
+              type="text" 
+              placeholder="Refine your selection (e.g. 'Only projects in Europe')..." 
+              className="input input-ghost flex-1 rounded-full focus:outline-none focus:bg-transparent bg-transparent"
+              value={refinement}
+              onChange={(e) => setRefinement(e.target.value)}
+              disabled={isRefining}
+            />
+            <button 
+              type="submit" 
+              className="btn btn-primary btn-circle"
+              disabled={isRefining || !refinement.trim()}
+            >
+              {isRefining ? <span className="loading loading-spinner"></span> : (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              )}
+            </button>
+          </form>
+        </div>
+      )}
+
     </div>
   );
 }
