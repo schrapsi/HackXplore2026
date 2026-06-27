@@ -60,6 +60,12 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
 
               <div className="card-body p-6">
                 <h2 className="card-title text-xl text-primary">{project.title}</h2>
+                <div className="flex flex-wrap gap-2">
+                  <span className="badge badge-outline">{project.categoryLabel}</span>
+                  <span className="badge badge-ghost">
+                    {project.coordinates.lat.toFixed(4)}, {project.coordinates.lng.toFixed(4)}
+                  </span>
+                </div>
                 <p className="text-base-content/80 text-sm mt-2 line-clamp-3">
                   {project.description}
                 </p>
