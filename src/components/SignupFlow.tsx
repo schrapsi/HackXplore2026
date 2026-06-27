@@ -47,7 +47,7 @@ export function SignupFlow({ project, budgetTier, onBack, onComplete }: SignupFl
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-base-200/30">
       <div className="absolute top-8 left-8">
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT</h1>
+        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
       </div>
       <button onClick={onBack} className="absolute top-8 right-8 btn btn-ghost rounded-full px-6">
         Cancel

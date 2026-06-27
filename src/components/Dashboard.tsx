@@ -116,7 +116,7 @@ export function Dashboard({ user, onLogout, onFundAnother }: DashboardProps) {
       {/* 🚀 Brand & User Header (Neobroker Style: minimal, sticky, blurred) */}
       <header className="sticky top-0 z-30 bg-base-100/80 backdrop-blur-md border-b border-base-300 py-4 px-6 md:px-12 flex justify-between items-center transition-all">
         <div className="flex items-center gap-3">
-          <span className="text-2xl font-bold tracking-tighter text-primary">IMPACT</span>
+          <span className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</span>
           <span className="badge badge-sm badge-outline badge-neutral">DASHBOARD</span>
         </div>
 
