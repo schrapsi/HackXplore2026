@@ -932,12 +932,19 @@ const matchBudgetTier = (cost: number, tier: string): boolean => {
   }
 };
 
+export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
+  return initialCost + (runningCostsPerYear / 0.04);
+};
+
 // Scaffold function simulating AI processing of user input
 export const processUserInput = async (prompts: string[], budget: string): Promise<Project[]> => {
   const lowercasePrompt = prompts[prompts.length - 1].toLowerCase();
 
-  // 1. Filter by budget first using initialCost
-  const budgetMatched = sampleProjects.filter(p => matchBudgetTier(p.initialCost, budget));
+  // 1. Filter by budget first: matches if initialCost fits OR total commitment fits
+  const budgetMatched = sampleProjects.filter(p => {
+    const total = calculateTotalCommitment(p.initialCost, p.runningCostsPerYear);
+    return matchBudgetTier(p.initialCost, budget) || matchBudgetTier(total, budget);
+  });
 
   try {
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
@@ -1013,8 +1020,4 @@ Return the IDs of the top 3 most fitting projects in order of relevance, taking 
   }
 
   return budgetMatched.slice(0, 3);
-};
-
-export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
-  return initialCost + (runningCostsPerYear / 0.04);
 };

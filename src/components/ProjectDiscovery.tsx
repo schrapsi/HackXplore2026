@@ -135,18 +135,21 @@ export function ProjectDiscovery({ projects, onBack, onFundProject, onRefineSear
                       <div className="bg-base-200/40 rounded-2xl p-4 my-3 border border-base-300/40 flex flex-col gap-3">
                         <div className="flex justify-between items-center">
                           <div>
-                            <span className="text-[10px] uppercase font-extrabold text-primary tracking-wider block">Required Commitment</span>
-                            <span className="text-2xl font-black text-base-content">€{total.toLocaleString()}</span>
+                            <span className="text-[10px] uppercase font-extrabold text-primary tracking-wider block">Initial Launch Cost</span>
+                            <span className="text-2xl font-black text-base-content">€{project.initialCost.toLocaleString()}</span>
                           </div>
-                          <span className="badge badge-success badge-sm font-semibold text-[10px] py-1 px-2.5">Lifetime Upkeep</span>
+                          <span className="badge badge-primary badge-sm font-semibold text-[10px] py-1 px-2.5">Launch Budget</span>
                         </div>
                         
                         <div className="border-t border-base-300/60 my-0.5"></div>
                         
                         <div className="grid grid-cols-2 gap-4 text-[11px] text-base-content/70">
                           <div>
-                            <span className="font-semibold block text-base-content/50">Initial Launch Cost</span>
-                            <span className="text-xs font-bold text-base-content">€{project.initialCost.toLocaleString()}</span>
+                            <span className="font-semibold block text-base-content/50">Required Commitment</span>
+                            <span className="text-xs font-bold text-base-content">€{total.toLocaleString()}</span>
+                            <span className="block text-[9px] text-base-content/40 leading-none mt-0.5 font-medium">
+                              (includes lifetime upkeep)
+                            </span>
                           </div>
                           <div className="text-right">
                             <span className="font-semibold block text-base-content/50">Yearly Running Cost</span>
