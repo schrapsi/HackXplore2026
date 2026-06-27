@@ -7,11 +7,11 @@
 @plugin "daisyui/theme" {
   name: "lbbw";
   default: true;
-  --color-primary: #004a99;
+  --color-primary: #123250;
   --color-primary-content: #ffffff;
   --color-secondary: #7e8387;
   --color-secondary-content: #ffffff;
-  --color-accent: #00a3e0;
+  --color-accent: #37c391;
   --color-accent-content: #ffffff;
   --color-neutral: #1a1a1a;
   --color-neutral-content: #ffffff;
