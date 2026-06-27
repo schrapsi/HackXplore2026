@@ -291,7 +291,6 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
       </article>
     );
   };
-
   return (
     <div className="min-h-screen bg-base-100 text-base-content font-sans pb-16">
       <TopNavigationBar 

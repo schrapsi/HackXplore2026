@@ -49,6 +49,7 @@ export function ProjectDiscovery({ projects, onBack, onFundProject, onRefineSear
 
   return (
     <div className={`flex flex-col bg-base-200/50 ${activeView === 'map' ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+
       <TopNavigationBar 
         badgeText="DISCOVERY"
         rightElement={
