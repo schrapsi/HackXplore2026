@@ -1,4 +1,8 @@
 import { ImpactCategory, type Project } from '../types';
+import { GoogleGenerativeAI, SchemaType, type Schema } from '@google/generative-ai';
+
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 interface LocationOption {
   name: string;
@@ -932,14 +936,63 @@ const matchBudgetTier = (cost: number, tier: string): boolean => {
 };
 
 // Scaffold function simulating AI processing of user input
-export const processUserInput = (prompt: string, budget: string): Project[] => {
+export const processUserInput = async (prompt: string, budget: string): Promise<Project[]> => {
   const lowercasePrompt = prompt.toLowerCase();
 
   // 1. Filter by budget first using initialCost
   const budgetMatched = sampleProjects.filter(p => matchBudgetTier(p.initialCost, budget));
 
-  // 2. Simulate AI matching by checking if prompt keywords match categories/description
-  // In reality, this would be an API call to an LLM returning matching project IDs.
+  // 2. Call Gemini if available, else fallback to keyword matching
+  if (genAI) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        systemInstruction: "You are an AI assistant that matches user queries to the best philanthropic projects.",
+      });
+
+      const schema: Schema = {
+        type: SchemaType.ARRAY,
+        items: {
+          type: SchemaType.STRING,
+        },
+        description: "An array of matching project IDs",
+      };
+
+      const promptText = `
+        The user wants to contribute to: "${prompt}".
+        Their budget tier is: "${budget}".
+
+        Here are the available projects that match their budget:
+        ${JSON.stringify(budgetMatched.map(p => ({ id: p.id, title: p.title, description: p.description, category: p.category })), null, 2)}
+
+        Please return a JSON array containing the IDs of the projects that best match the user's intent. Rank them from best match to worst match. Only include project IDs that exist in the list.
+      `;
+
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: promptText }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: schema,
+          temperature: 0.2,
+        }
+      });
+
+      const responseText = result.response.text();
+      const matchedIds: string[] = JSON.parse(responseText);
+
+      const matchedProjects = matchedIds
+        .map(id => budgetMatched.find(p => p.id === id))
+        .filter((p): p is Project => p !== undefined);
+
+      if (matchedProjects.length > 0) {
+        return matchedProjects;
+      }
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+    }
+  }
+
+  // Fallback keyword matching
   const scoredProjects = budgetMatched.map(project => {
     let score = 0;
     project.category.forEach(cat => {
@@ -949,16 +1002,11 @@ export const processUserInput = (prompt: string, budget: string): Project[] => {
     if (lowercasePrompt.includes(project.title.toLowerCase())) score += 1;
     if (lowercasePrompt.includes(project.description.toLowerCase())) score += 1;
 
-    // If prompt is very short or generic, give a base score so we still show options
     if (score === 0 && lowercasePrompt.length < 10) score = 1;
-
     return { ...project, score };
   });
 
-  // Sort by score descending and return
   const sorted = scoredProjects.sort((a, b) => b.score - a.score);
-
-  // If no keyword matched but we have budget matches, just return the budget matches
   if (sorted.length > 0 && sorted[0].score > 0) {
      return sorted.map(({ score: _, ...project }) => project);
   }

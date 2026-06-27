@@ -30,9 +30,9 @@ function App() {
     checkSession();
   }, []);
 
-  const handleSearch = (prompt: string, budget: string) => {
+  const handleSearch = async (prompt: string, budget: string) => {
     setSelectedBudget(budget);
-    const results = processUserInput(prompt, budget);
+    const results = await processUserInput(prompt, budget);
     setMatchedProjects(results);
     setStep('discovery');
   };
