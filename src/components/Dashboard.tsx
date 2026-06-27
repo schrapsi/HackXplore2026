@@ -502,12 +502,18 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
                 {selectedFeed === 'personal' ? feedUpdates.length : globalFeedItems.length} Updates
               </div>
             </div>
-            <div className="join bg-base-200 p-1 rounded-full border border-base-300 w-full sm:w-auto">
+            <div className="relative grid grid-cols-2 bg-base-200 p-1 rounded-full border border-base-300 w-full sm:w-64 shadow-inner">
+              <span
+                className={`absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-primary shadow-sm transition-transform duration-300 ease-out ${
+                  selectedFeed === 'global' ? 'translate-x-full' : 'translate-x-0'
+                }`}
+                aria-hidden="true"
+              ></span>
               <button
                 type="button"
                 onClick={() => setSelectedFeed('personal')}
-                className={`btn btn-sm join-item rounded-full flex-1 sm:flex-none px-5 ${
-                  selectedFeed === 'personal' ? 'btn-primary' : 'btn-ghost'
+                className={`relative z-10 rounded-full px-5 py-2 text-sm font-bold transition-colors duration-300 ${
+                  selectedFeed === 'personal' ? 'text-primary-content' : 'text-base-content/70 hover:text-base-content'
                 }`}
               >
                 Personal
@@ -515,8 +521,8 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
               <button
                 type="button"
                 onClick={() => setSelectedFeed('global')}
-                className={`btn btn-sm join-item rounded-full flex-1 sm:flex-none px-5 ${
-                  selectedFeed === 'global' ? 'btn-primary' : 'btn-ghost'
+                className={`relative z-10 rounded-full px-5 py-2 text-sm font-bold transition-colors duration-300 ${
+                  selectedFeed === 'global' ? 'text-primary-content' : 'text-base-content/70 hover:text-base-content'
                 }`}
               >
                 Global
