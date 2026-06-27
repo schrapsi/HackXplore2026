@@ -931,12 +931,19 @@ const matchBudgetTier = (cost: number, tier: string): boolean => {
   }
 };
 
+export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
+  return initialCost + (runningCostsPerYear / 0.04);
+};
+
 // Scaffold function simulating AI processing of user input
 export const processUserInput = (prompt: string, budget: string): Project[] => {
   const lowercasePrompt = prompt.toLowerCase();
 
-  // 1. Filter by budget first using initialCost
-  const budgetMatched = sampleProjects.filter(p => matchBudgetTier(p.initialCost, budget));
+  // 1. Filter by budget first: matches if initialCost fits OR total commitment fits
+  const budgetMatched = sampleProjects.filter(p => {
+    const total = calculateTotalCommitment(p.initialCost, p.runningCostsPerYear);
+    return matchBudgetTier(p.initialCost, budget) || matchBudgetTier(total, budget);
+  });
 
   // 2. Simulate AI matching by checking if prompt keywords match categories/description
   // In reality, this would be an API call to an LLM returning matching project IDs.
@@ -964,8 +971,4 @@ export const processUserInput = (prompt: string, budget: string): Project[] => {
   }
 
   return budgetMatched;
-};
-
-export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
-  return initialCost + (runningCostsPerYear / 0.04);
 };
