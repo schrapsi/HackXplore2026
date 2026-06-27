@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { mockBackend } from '../data/auth';
+import { TopNavigationBar } from './TopNavigationBar';
 
 interface ImpactHubProps {
   onBack: () => void;
@@ -41,16 +42,14 @@ export function ImpactHub({ onBack }: ImpactHubProps) {
 
   return (
     <div className="min-h-screen bg-base-200/50 pb-16 animate-fade-in">
-      {/* Brand Header */}
-      <header className="sticky top-0 z-30 bg-base-200/80 backdrop-blur-md border-b border-base-300 py-4 px-6 md:px-12 flex justify-between items-center transition-all">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</span>
-          <span className="badge badge-sm badge-outline badge-neutral">HUB</span>
-        </div>
-        <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-4 text-xs font-semibold hover:bg-base-content/10">
-          Back to Dashboard
-        </button>
-      </header>
+      <TopNavigationBar 
+        badgeText="HUB"
+        rightElement={
+          <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-4 text-xs font-semibold hover:bg-base-content/10">
+            Back to Dashboard
+          </button>
+        }
+      />
 
       <div className="max-w-5xl mx-auto mt-12 flex flex-col items-center">
 

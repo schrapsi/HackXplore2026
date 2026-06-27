@@ -10,7 +10,7 @@ interface SignupFlowProps {
   onComplete: () => void;
 }
 
-
+import { TopNavigationBar } from './TopNavigationBar';
 
 export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: SignupFlowProps) {
   const [name, setName] = useState('Emma Fischer');
@@ -51,15 +51,17 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-base-200/30">
-      <div className="absolute top-8 left-8">
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
-      </div>
-      <button onClick={onBack} className="absolute top-8 right-8 btn btn-ghost rounded-full px-6">
-        Cancel
-      </button>
-
-      <div className="w-full max-w-md bg-base-100 rounded-3xl shadow-2xl overflow-hidden border border-base-300">
+    <div className="min-h-screen flex flex-col bg-base-200/30">
+      <TopNavigationBar 
+        badgeText="CHECKOUT"
+        rightElement={
+          <button onClick={onBack} className="btn btn-ghost btn-sm rounded-full px-6 font-semibold">
+            Cancel
+          </button>
+        }
+      />
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md bg-base-100 rounded-3xl shadow-2xl overflow-hidden border border-base-300">
         
         {/* Header Section */}
         <div className="bg-primary p-8 text-primary-content text-center">
@@ -171,6 +173,7 @@ export function SignupFlow({ project, budgetTier: _, onBack, onComplete }: Signu
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

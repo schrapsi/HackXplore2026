@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { TopNavigationBar } from './TopNavigationBar'
 
 interface LandingPageProps {
   onSearch: (prompt: string, budget: string) => void;
@@ -73,24 +74,23 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      {/* Brand Header */}
-      <div className="absolute top-8 left-8">
-        <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
-      </div>
-      <div className="absolute top-8 right-8">
-        <button 
-          onClick={onNavigateLogin} 
-          className="btn btn-outline btn-sm rounded-full px-6 border-base-content/20"
-        >
-          Log in
-        </button>
-      </div>
+    <div className="min-h-screen flex flex-col bg-base-100">
+      <TopNavigationBar 
+        rightElement={
+          <button 
+            onClick={onNavigateLogin} 
+            className="btn btn-outline btn-sm rounded-full px-6 border-base-content/20"
+          >
+            Log in
+          </button>
+        }
+      />
 
-      {/* Main Search Area */}
-      <div className="w-full max-w-3xl flex flex-col items-center animate-fade-in-up">
-        
-        <h2 className="text-4xl md:text-5xl font-semibold mb-12 text-center text-base-content tracking-tight">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        {/* Main Search Area */}
+        <div className="w-full max-w-3xl flex flex-col items-center animate-fade-in-up">
+          
+          <h2 className="text-4xl md:text-5xl font-semibold mb-12 text-center text-base-content tracking-tight">
           How do you want to improve the world today?
         </h2>
 
@@ -140,6 +140,7 @@ export function LandingPage({ onSearch, onNavigateLogin }: LandingPageProps) {
           </div>
 
         </form>
+      </div>
       </div>
     </div>
   )
