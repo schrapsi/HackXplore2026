@@ -9,7 +9,7 @@ export function TopNavigationBar({ badgeText, rightElement }: TopNavigationBarPr
   return (
     <header className="sticky top-0 z-50 bg-base-100/80 backdrop-blur-md border-b border-base-300 py-4 px-6 md:px-12 flex justify-between items-center transition-all w-full">
       <div className="flex items-center gap-3">
-        <span className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</span>
+        <img src="/impact.svg" alt="IMPACT Logo" className="h-10 w-auto -my-2 object-contain" />
         {badgeText && (
           <span className="badge badge-sm badge-outline badge-neutral hidden sm:inline-flex">
             {badgeText}
