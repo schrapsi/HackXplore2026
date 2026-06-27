@@ -1,4 +1,5 @@
 import type { Project } from '../types';
+import { calculateTotalCommitment } from '../data/projects';
 
 interface ProjectDiscoveryProps {
   projects: Project[];
@@ -77,16 +78,39 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
                   {project.description}
                 </p>
 
-                <div className="flex justify-between items-center bg-base-200/50 rounded-xl p-3 my-3 text-sm border border-base-300/30">
-                  <div>
-                    <span className="text-xs uppercase font-bold text-base-content/40 block">Initial Cost</span>
-                    <span className="font-extrabold text-base-content">${project.initialCost.toLocaleString()}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs uppercase font-bold text-base-content/40 block">Running Cost/Yr</span>
-                    <span className="font-extrabold text-base-content">${project.runningCostsPerYear.toLocaleString()}</span>
-                  </div>
-                </div>
+                {(() => {
+                  const total = calculateTotalCommitment(project.initialCost, project.runningCostsPerYear);
+                  const endowment = project.runningCostsPerYear / 0.04;
+                  return (
+                    <div className="bg-base-200/40 rounded-2xl p-4 my-3 border border-base-300/40 flex flex-col gap-3">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-[10px] uppercase font-extrabold text-primary tracking-wider block">Required Commitment</span>
+                          <span className="text-2xl font-black text-base-content">€{total.toLocaleString()}</span>
+                        </div>
+                        <span className="badge badge-success badge-sm font-semibold text-[10px] py-1 px-2.5">Lifetime Upkeep</span>
+                      </div>
+                      
+                      <div className="border-t border-base-300/60 my-0.5"></div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-[11px] text-base-content/70">
+                        <div>
+                          <span className="font-semibold block text-base-content/50">Initial Launch Cost</span>
+                          <span className="text-xs font-bold text-base-content">€{project.initialCost.toLocaleString()}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-semibold block text-base-content/50">Yearly Running Cost</span>
+                          <span className="text-xs font-bold text-base-content">
+                            €{project.runningCostsPerYear.toLocaleString()}/yr
+                          </span>
+                          <span className="block text-[9px] text-base-content/40 leading-none mt-0.5 text-success font-medium">
+                            (upkeep covered by a €{endowment.toLocaleString()} maintenance fund)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
                 
                 <div className="divider my-2"></div>
                 

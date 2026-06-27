@@ -869,3 +869,7 @@ export const processUserInput = (prompt: string, budget: string): Project[] => {
 
   return budgetMatched;
 };
+
+export const calculateTotalCommitment = (initialCost: number, runningCostsPerYear: number): number => {
+  return initialCost + (runningCostsPerYear / 0.04);
+};
