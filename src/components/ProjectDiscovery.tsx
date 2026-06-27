@@ -27,18 +27,18 @@ export function ProjectDiscovery({ projects, onBack, onFundProject }: ProjectDis
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 md:p-8 bg-base-200/50">
+    <div className={`flex flex-col bg-base-200/50 ${activeView === 'map' ? 'h-screen p-4 md:p-6 overflow-hidden' : 'min-h-screen p-4 md:p-8'}`}>
       
       {/* Header */}
-      <div className="w-full max-w-6xl mx-auto flex justify-between items-center mb-12">
+      <div className={`w-full max-w-6xl mx-auto flex justify-between items-center ${activeView === 'map' ? 'mb-4' : 'mb-12'}`}>
         <h1 className="text-2xl font-bold tracking-tighter text-primary">IMPACT.</h1>
         <button onClick={onBack} className="btn btn-ghost rounded-full px-6">
           Start over
         </button>
       </div>
 
-      <div className="w-full max-w-6xl mx-auto flex-grow flex flex-col">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+      <div className={`w-full max-w-6xl mx-auto flex-grow flex flex-col ${activeView === 'map' ? 'min-h-0' : ''}`}>
+        <div className={`flex flex-col md:flex-row md:items-end justify-between ${activeView === 'map' ? 'mb-4' : 'mb-10'} gap-4`}>
           <div className="text-center md:text-left">
             <h2 className="text-3xl md:text-4xl font-semibold text-base-content">
               Curated projects for you
