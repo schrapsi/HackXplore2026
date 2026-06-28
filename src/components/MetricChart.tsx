@@ -58,6 +58,12 @@ export function MetricChart({ metric }: MetricChartProps) {
     return date.toLocaleDateString('en-US', { month: 'short' });
   };
 
+  const formatYValue = (value: number) => {
+    if (value >= 1e6) return `${(value / 1e6).toFixed(1).replace(/\.0$/, '')}M`;
+    if (value >= 1e3) return `${(value / 1e3).toFixed(1).replace(/\.0$/, '')}k`;
+    return Math.round(value).toString();
+  };
+
   return (
     <div className="card bg-base-100 border border-base-300 shadow-sm p-6 rounded-3xl flex flex-col gap-4 relative overflow-hidden">
       <div>
@@ -88,6 +94,17 @@ export function MetricChart({ metric }: MetricChartProps) {
           <line x1={paddingX} y1={paddingY} x2={width - paddingX} y2={paddingY} stroke="currentColor" className="text-base-content/10 stroke-1 stroke-dashed" />
           <line x1={paddingX} y1={height / 2} x2={width - paddingX} y2={height / 2} stroke="currentColor" className="text-base-content/10 stroke-1 stroke-dashed" />
           <line x1={paddingX} y1={height - paddingY} x2={width - paddingX} y2={height - paddingY} stroke="currentColor" className="text-base-content/15 stroke-1" />
+
+          {/* Y-axis Text Labels */}
+          <text x={paddingX - 8} y={paddingY + 3} textAnchor="end" className="text-[10px] font-bold fill-base-content/40">
+            {formatYValue(maxVal)}
+          </text>
+          <text x={paddingX - 8} y={height / 2 + 3} textAnchor="end" className="text-[10px] font-bold fill-base-content/40">
+            {formatYValue((minVal + maxVal) / 2)}
+          </text>
+          <text x={paddingX - 8} y={height - paddingY + 3} textAnchor="end" className="text-[10px] font-bold fill-base-content/40">
+            {formatYValue(minVal)}
+          </text>
 
           {/* Gradient Area under the line */}
           {areaD && (
