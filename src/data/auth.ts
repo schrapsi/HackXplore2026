@@ -1,4 +1,5 @@
 import type { User } from '../types';
+import tomFosterAvatarUrl from '../assets/tom-foster.jpeg';
 
 // Mocked database - this will be wiped if the page is refreshed!
 let usersDb: User[] = [];
@@ -17,7 +18,7 @@ export const mockBackend = {
       name,
       email,
       hubBrandName,
-      avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120`,
+      avatarUrl: tomFosterAvatarUrl,
       fundedProjects: []
     };
     
