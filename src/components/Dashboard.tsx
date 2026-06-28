@@ -370,16 +370,6 @@ export function Dashboard({ user, onLogout, onFundAnother, onNavigateHub }: Dash
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4 border-t border-base-300/80 pt-4">
-              <div>
-                <p className="text-xs text-base-content/40 uppercase font-semibold">Projects</p>
-                <p className="text-2xl font-bold mt-0.5">{supportedProjects.length}</p>
-              </div>
-              <div>
-                <p className="text-xs text-base-content/40 uppercase font-semibold">Tier Status</p>
-                <p className="text-2xl font-bold text-accent mt-0.5">Active</p>
-              </div>
-            </div>
 
             {/* Tangible Metrics Accumulator */}
             <div className="border-t border-base-300/80 pt-4 flex flex-col gap-3">
