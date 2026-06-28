@@ -14,7 +14,7 @@ export function MetricChart({ metric }: MetricChartProps) {
   // Chart dimensions
   const width = 500;
   const height = 180;
-  const paddingX = 40;
+  const paddingX = 55;
   const paddingY = 20;
 
   const values = data.map(d => d.value);
@@ -58,6 +58,12 @@ export function MetricChart({ metric }: MetricChartProps) {
     return date.toLocaleDateString('en-US', { month: 'short' });
   };
 
+  const formatYLabel = (val: number) => {
+    if (val >= 1000000) return (val / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (val >= 1000) return (val / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return Math.round(val).toString();
+  };
+
   return (
     <div className="card bg-base-100 border border-base-300 shadow-sm p-6 rounded-3xl flex flex-col gap-4 relative overflow-hidden">
       <div>
@@ -83,6 +89,18 @@ export function MetricChart({ metric }: MetricChartProps) {
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
+
+          {/* Y-axis Line and Labels */}
+          <line x1={paddingX} y1={paddingY} x2={paddingX} y2={height - paddingY} stroke="currentColor" className="text-base-content/15 stroke-1" />
+          <text x={paddingX - 10} y={paddingY + 3} textAnchor="end" className="text-[10px] font-bold fill-base-content/40">
+            {formatYLabel(maxVal)}
+          </text>
+          <text x={paddingX - 10} y={height / 2 + 3} textAnchor="end" className="text-[10px] font-bold fill-base-content/40">
+            {formatYLabel(minVal + valRange / 2)}
+          </text>
+          <text x={paddingX - 10} y={height - paddingY + 3} textAnchor="end" className="text-[10px] font-bold fill-base-content/40">
+            {formatYLabel(minVal)}
+          </text>
 
           {/* Grid Lines */}
           <line x1={paddingX} y1={paddingY} x2={width - paddingX} y2={paddingY} stroke="currentColor" className="text-base-content/10 stroke-1 stroke-dashed" />
